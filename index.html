@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Site Main Control · 다인에듀 사이트 관리 콘솔</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<script>document.write('<script src="config.js?v=' + Date.now() + '"><\/script>');</script>
+<script src="catalog.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#0f172a;--sub:#64748b;--mute:#94a3b8;--line:#e6e9f0;--soft:#f8fafc;--pri:#4f46e5;--pri2:#eef2ff;--ok:#16a34a;--okb:#dcfce7;--warn:#d97706;--warnb:#fef3c7;--bad:#dc2626;--badb:#fee2e2;--r:14px;--sh:0 1px 2px rgba(15,23,42,.05),0 6px 20px rgba(15,23,42,.05)}
+[data-theme=dark]{--bg:#0a0f1d;--card:#111a2d;--ink:#e6eaf5;--sub:#9aa6bd;--mute:#6b7891;--line:#22304a;--soft:#0e1627;--pri:#8b93ff;--pri2:#1c2350;--okb:#0f2e1c;--warnb:#33240b;--badb:#3a1414;--sh:none}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+a{color:var(--pri);text-decoration:none}button,input,select,textarea{font:inherit;color:inherit}
+#app{display:flex;min-height:100vh}
+#side{width:232px;flex:none;background:var(--card);border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column;gap:4px;z-index:30}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 16px}
+.brand .lg{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#6366f1,#ec4899);display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;flex:none}
+.brand b{display:block;font-size:15px;letter-spacing:-.02em}.brand small{color:var(--sub);font-size:11px}
+.nav{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--sub);font-weight:600;cursor:pointer;border:0;background:none;width:100%;text-align:left}
+.nav:hover{background:var(--soft);color:var(--ink)}.nav.on{background:var(--pri2);color:var(--pri)}
+.nav .i{width:20px;text-align:center}.nav .c{margin-left:auto;font-size:11px;background:var(--soft);color:var(--sub);border-radius:999px;padding:2px 8px}
+.nav .c.hot{background:var(--bad);color:#fff}
+.side-foot{margin-top:auto;font-size:11px;color:var(--mute);padding:10px 12px;line-height:1.6}
+#wrap{flex:1;min-width:0;display:flex;flex-direction:column}
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 24px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#top h1{font-size:18px;margin:0;letter-spacing:-.02em}
+#top .sp{flex:1}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;border-radius:999px;padding:5px 10px;background:var(--soft);color:var(--sub);white-space:nowrap}
+.pill.ok{background:var(--okb);color:var(--ok)}.pill.warn{background:var(--warnb);color:var(--warn)}.pill.bad{background:var(--badb);color:var(--bad)}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+#main{padding:22px 24px 60px;max-width:1500px;width:100%}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 12px;font-weight:600;cursor:pointer;white-space:nowrap;font-size:13px}
+.btn:hover{background:var(--soft)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}.btn.pri:hover{filter:brightness(1.08)}
+.btn.bad{color:var(--bad)}.btn.sm{padding:5px 9px;font-size:12px;border-radius:8px}.btn.ic{padding:6px 8px}
+.btn.ghost{border-color:transparent;background:transparent}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:18px}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.kpi{padding:16px 18px}.kpi .l{color:var(--sub);font-size:12px;font-weight:600;display:flex;gap:6px;align-items:center}
+.kpi .v{font-size:28px;font-weight:800;letter-spacing:-.03em;margin-top:6px}.kpi .s{font-size:12px;color:var(--mute);margin-top:2px}
+h3.t{font-size:15px;margin:0 0 12px;display:flex;align-items:center;gap:8px}h3.t .sp{flex:1}
+.cols2{grid-template-columns:1.4fr 1fr}.cols3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:1100px){.cols2,.cols3{grid-template-columns:1fr}}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.search{position:relative;flex:1;min-width:200px;max-width:380px}
+.search input{width:100%;padding:9px 12px 9px 34px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.search:before{content:"🔍";position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.6}
+select.f,input.f,textarea.f{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--card);max-width:100%}
+textarea.f{width:100%;resize:vertical;line-height:1.5}input.f{width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(--pri) 35%,transparent);outline-offset:0;border-color:var(--pri)}
+table.tb{width:100%;border-collapse:separate;border-spacing:0}
+.tb th{font-size:12px;color:var(--sub);font-weight:700;text-align:left;padding:10px 10px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--card)}
+.tb td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tb tr:hover td{background:var(--soft)}.tb tr.selr td{background:var(--pri2)}
+.nm .t1{font-weight:700;line-height:1.3}.nm .t2{font-size:12px;color:var(--sub);margin-top:2px}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;border-radius:6px;padding:3px 7px;background:var(--soft);color:var(--sub);white-space:nowrap;border:1px solid var(--line)}
+.tag.g{border:0;color:#fff}
+.b-ok{color:var(--ok);background:var(--okb);border-color:transparent}.b-warn{color:var(--warn);background:var(--warnb);border-color:transparent}.b-bad{color:var(--bad);background:var(--badb);border-color:transparent}.b-pri{color:var(--pri);background:var(--pri2);border-color:transparent}
+select.mode{border:1px solid var(--line);border-radius:9px;padding:6px 8px;font-weight:700;font-size:12px;background:var(--card);cursor:pointer}
+select.mode.m-public{color:#16a34a}select.mode.m-members{color:#2563eb}select.mode.m-private{color:#7c3aed}select.mode.m-maintenance{color:#d97706}select.mode.m-closed{color:#dc2626}
+.star{border:0;background:none;cursor:pointer;font-size:16px;opacity:.35;padding:2px}.star.on{opacity:1}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.scard{padding:14px;display:flex;flex-direction:column;gap:10px}
+.scard .hd{display:flex;gap:8px;align-items:flex-start}.scard .hd .nm{flex:1;min-width:0}
+.scard .ft{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.bulk{position:sticky;top:62px;z-index:5;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--pri);color:#fff;border-radius:12px;padding:10px 14px;margin-bottom:12px}
+.bulk .btn{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff}.bulk select{background:#fff;color:#0f172a;border-radius:8px;border:0;padding:6px}
+.muted{color:var(--sub)}.mute{color:var(--mute)}.small{font-size:12px}.b{font-weight:700}
+.empty{text-align:center;padding:50px 20px;color:var(--sub)}.empty .e{font-size:40px;margin-bottom:8px}
+.bars{display:flex;align-items:flex-end;gap:5px;height:150px;padding-top:10px}
+.bars .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px;height:100%;position:relative}
+.bars .seg{width:100%;border-radius:4px 4px 0 0;min-height:0}.bars .lb{font-size:10px;color:var(--mute);margin-top:4px}
+.bars .col:hover .tip{display:block}.tip{display:none;position:absolute;bottom:100%;background:var(--ink);color:var(--card);font-size:11px;border-radius:6px;padding:4px 7px;white-space:nowrap;z-index:3}
+.hbar{display:flex;align-items:center;gap:10px;margin:7px 0}.hbar .n{width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.hbar .tr{flex:1;height:8px;background:var(--soft);border-radius:99px;overflow:hidden}.hbar .fl{height:100%;background:linear-gradient(90deg,#6366f1,#a855f7);border-radius:99px}.hbar .v{width:36px;text-align:right;font-weight:700;font-size:12px}
+.li{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line)}.li:last-child{border:0}.li .g{flex:1;min-width:0}
+.ellip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.setup{background:linear-gradient(135deg,#4f46e5,#9333ea);color:#fff;border:0}.setup p{opacity:.9;line-height:1.6}.setup .btn{background:#fff;color:#4f46e5;border:0}
+.steps{counter-reset:s;display:grid;gap:12px}
+.step{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+.step:before{counter-increment:s;content:counter(s);width:26px;height:26px;border-radius:50%;background:var(--pri);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;font-size:13px}
+.step.done:before{content:"✓";background:var(--ok)}.step .g{flex:1;min-width:0}.step b{display:block;margin-bottom:4px}
+.step ol,.step ul{margin:6px 0 0;padding-left:18px;line-height:1.75;color:var(--sub);font-size:13px}
+pre.code{background:#0b1020;color:#c7d2fe;border-radius:10px;padding:12px;overflow:auto;font-size:12px;line-height:1.5;max-height:340px;margin:8px 0;white-space:pre}
+code{background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>.g{flex:1;min-width:0}
+.fld{margin-bottom:12px}.fld>label{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;user-select:none;background:var(--card)}
+.chip input{display:none}.chip.on,.chip:has(input:checked){border-color:var(--pri);background:var(--pri2);color:var(--pri)}
+.chip .sw{width:9px;height:9px;border-radius:50%}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.mcard{border:1.5px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;background:var(--card);text-align:left}
+.mcard .ic{font-size:20px}.mcard b{display:block;font-size:13px;margin-top:4px}.mcard small{color:var(--sub);font-size:11px;line-height:1.4;display:block;margin-top:2px}
+.mcard.on{border-color:var(--pri);background:var(--pri2)}
+.picker{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.picker .ph{display:flex;gap:8px;padding:8px;border-bottom:1px solid var(--line);background:var(--soft);align-items:center;flex-wrap:wrap}
+.picker .pb{max-height:260px;overflow:auto;padding:6px 10px}
+.picker .pc{font-size:11px;font-weight:800;color:var(--sub);margin:10px 0 4px;display:flex;align-items:center;gap:8px}
+.picker label.pi{display:flex;align-items:center;gap:8px;padding:5px 4px;border-radius:7px;cursor:pointer;font-size:13px}
+.picker label.pi:hover{background:var(--soft)}.picker label.pi small{color:var(--mute);margin-left:auto;font-size:11px}
+#drawer{position:fixed;top:0;right:0;height:100vh;width:min(560px,100vw);background:var(--card);border-left:1px solid var(--line);box-shadow:-20px 0 50px rgba(0,0,0,.12);z-index:60;transform:translateX(105%);transition:transform .25s ease;overflow:auto}
+#drawer.open{transform:none}
+#drawer .dh{position:sticky;top:0;background:var(--card);padding:16px 20px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start;z-index:2}
+#drawer .db{padding:18px 20px}#drawer section{margin-bottom:22px}#drawer h4{font-size:13px;margin:0 0 10px;color:var(--sub);text-transform:none}
+#scrim{position:fixed;inset:0;background:rgba(15,23,42,.35);z-index:55;display:none}#scrim.on{display:block}
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:80;display:flex;align-items:center;justify-content:center;padding:16px;animation:fd .15s}
+@keyframes fd{from{opacity:0}}
+.modal{background:var(--card);border-radius:18px;width:min(640px,100%);max-height:92vh;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.modal .mh{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.modal .mh h3{margin:0;font-size:16px;flex:1}
+.modal .mb{padding:18px 20px;overflow:auto}.modal .mf{padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+#toasts{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:99;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{background:var(--ink);color:var(--card);padding:10px 16px;border-radius:12px;font-weight:600;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:tu .2s}
+.toast.bad{background:var(--bad);color:#fff}.toast.ok{background:var(--ok);color:#fff}
+@keyframes tu{from{transform:translateY(8px);opacity:0}}
+.prog{height:8px;background:var(--soft);border-radius:99px;overflow:hidden}.prog>div{height:100%;background:var(--pri);transition:width .2s}
+.banner{display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:12px;margin-bottom:14px;font-size:13px;line-height:1.5}
+.banner.warn{background:var(--warnb);color:var(--warn)}.banner.info{background:var(--pri2);color:var(--pri)}
+.qr svg{width:220px;height:220px;display:block;margin:0 auto;background:#fff;padding:10px;border-radius:12px}
+iframe.pv{width:100%;height:340px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.hide-m{}
+#menuBtn{display:none}
+@media(max-width:860px){
+  #side{position:fixed;left:0;transform:translateX(-105%);transition:transform .2s;box-shadow:10px 0 40px rgba(0,0,0,.15)}#side.open{transform:none}
+  #menuBtn{display:inline-flex}#main{padding:16px 12px 60px}#top{padding:10px 12px}.hide-m{display:none!important}
+}
+kbd{font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--card)}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="side">
+    <div class="brand"><div class="lg">🛡️</div><div><b>Site Main Control</b><small>다인에듀 사이트 관리 콘솔</small></div></div>
+    <div id="navList"></div>
+    <div class="side-foot">github.com/<span id="ownerName">yalli2</span><br>단축키 <kbd>/</kbd> 검색 · <kbd>g</kbd>+<kbd>s</kbd> 사이트</div>
+  </aside>
+  <div id="wrap">
+    <header id="top"></header>
+    <main id="main"></main>
+  </div>
+</div>
+<div id="scrim"></div>
+<div id="drawer"></div>
+<div id="modalRoot"></div>
+<div id="toasts"></div>
+
+<script type="module">
+/* ==========================================================================
+   Site Main Control — 관리 콘솔
+   ========================================================================== */
+const RAW_CFG = window.SMC_CONFIG || {};
+const OWNER = RAW_CFG.owner || 'yalli2';
+const SELF = 'site_main_control';
+const BASE_URL = `https://${OWNER}.github.io/${SELF}/`;
+const GUARD_SRC = BASE_URL + 'guard.js';
+const FBV = '10.12.2';
+const CATALOG = window.SMC_CATALOG || {};
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const today = () => new Date().toLocaleDateString('sv-SE');
+const addDays = (n, from) => { const d = from ? new Date(from) : new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString('sv-SE'); };
+const addMonths = n => { const d = new Date(); d.setMonth(d.getMonth() + n); return d.toLocaleDateString('sv-SE'); };
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  del(k) { try { localStorage.removeItem(k); } catch {} }
+};
+const pageUrl = name => `https://${OWNER}.github.io/${name}/`;
+const tsDate = ts => ts ? (ts.toDate ? ts.toDate() : new Date(ts.seconds ? ts.seconds * 1000 : ts)) : null;
+const fmtDT = ts => { const d = tsDate(ts); return d ? d.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'; };
+const ago = ts => {
+  const d = tsDate(ts); if (!d) return '—';
+  const s = (Date.now() - d.getTime()) / 1000;
+  if (s < 60) return '방금'; if (s < 3600) return Math.floor(s / 60) + '분 전'; if (s < 86400) return Math.floor(s / 3600) + '시간 전';
+  if (s < 86400 * 30) return Math.floor(s / 86400) + '일 전'; return d.toLocaleDateString('ko-KR');
+};
+const fmtDate = iso => iso ? new Date(iso).toLocaleDateString('ko-KR', { year: '2-digit', month: 'numeric', day: 'numeric' }) : '—';
+const uniq = a => [...new Set(a)];
+
+const MODES = {
+  public: { ico: '🌐', label: '공개', desc: '누구나 접속 (로그인 없음)' },
+  members: { ico: '👥', label: '회원 전체', desc: '등록된 활성 회원 누구나' },
+  private: { ico: '🔒', label: '지정 회원만', desc: '권한 준 회원·그룹만' },
+  maintenance: { ico: '🛠️', label: '점검 중', desc: '관리자만, 안내문 표시' },
+  closed: { ico: '⛔', label: '차단', desc: '관리자 외 접속 불가' }
+};
+const CATS = {
+  es: '🇪🇸 스페인어', en: '🇺🇸 영어', zh: '🇨🇳 중국어', ja: '🇯🇵 일본어', fr: '🇫🇷 프랑스어', lang: '🌍 기타 외국어',
+  dainedu: '🏫 다인에듀 운영', hr: '💼 HR 프로그램', tools: '🧰 도구·연습', student: '🎓 학생·입시', life: '✈️ 생활·여행', etc: '📁 기타'
+};
+const GCOLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#ef4444', '#8b5cf6', '#84cc16', '#0ea5e9', '#f97316'];
+const RESULTS = { visit: ['방문', 'b-pri'], allowed: ['허용', 'b-ok'], admin: ['관리자', 'b-ok'], denied: ['거부', 'b-bad'] };
+const REASONS = { notmember: '미등록 계정', suspended: '정지된 계정', expired: '기간 만료', nosite: '사이트 권한 없음' };
+
+/* ---------------- 상태 ---------------- */
+function loadCfg() {
+  const c = JSON.parse(JSON.stringify(RAW_CFG));
+  c.owner = OWNER;
+  c.adminEmails = (c.adminEmails || []).map(e => String(e).toLowerCase().trim()).filter(Boolean);
+  c.options = Object.assign({ defaultMode: 'public', trackPublic: true, showBadge: true, logging: true }, c.options || {});
+  c.committed = !!(c.firebase && c.firebase.apiKey);
+  if (!c.committed) {
+    const d = LS.get('smc:cfgDraft', null);
+    if (d && d.firebase && d.firebase.apiKey) { Object.assign(c, d); c.draft = true; }
+  }
+  return c;
+}
+const S = {
+  cfg: loadCfg(), fb: null, user: null, admin: false, authReady: false,
+  repos: [], reposErr: '', reposLoading: true,
+  sites: {}, users: {}, groups: {}, requests: [], logs: [], logsLoaded: false, logDays: 30,
+  checks: LS.get('smc:checks', {}), favs: new Set(LS.get('smc:favs', [])), meta: LS.get('smc:localMeta', {}),
+  view: (location.hash.slice(1) || 'dashboard'),
+  sel: new Set(), drawer: null, logLimit: 300,
+  f: { q: '', cat: 'all', mode: 'all', guard: 'all', sort: 'pushed', all: false, layout: LS.get('smc:layout', 'table'), favOnly: false },
+  uf: { q: '', group: 'all', status: 'all' },
+  lf: { q: '', site: 'all', result: 'all' }
+};
+document.documentElement.dataset.theme = LS.get('smc:theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+$('#ownerName').textContent = OWNER;
+
+/* ---------------- 공통 UI ---------------- */
+function toast(msg, type = '') {
+  const el = document.createElement('div'); el.className = 'toast ' + type; el.textContent = msg;
+  $('#toasts').appendChild(el); setTimeout(() => el.remove(), type === 'bad' ? 5000 : 2600);
+}
+function modal({ title, body, actions = [{ label: '닫기', value: null }], wide = false, onOpen }) {
+  return new Promise(resolve => {
+    const bg = document.createElement('div'); bg.className = 'modal-bg';
+    bg.innerHTML = `<div class="modal" style="${wide ? 'width:min(860px,100%)' : ''}"><div class="mh"><h3>${title}</h3><button class="btn ghost ic" data-x="close">✕</button></div>
+      <div class="mb">${body}</div><div class="mf">${actions.map((a, i) => `<button class="btn ${a.cls || ''}" data-i="${i}">${a.label}</button>`).join('')}</div></div>`;
+    $('#modalRoot').appendChild(bg);
+    const close = v => { bg.remove(); resolve(v); };
+    bg.addEventListener('click', async e => {
+      if (e.target === bg || e.target.closest('[data-x=close]')) return close(null);
+      const b = e.target.closest('.mf [data-i]'); if (!b) return;
+      const a = actions[+b.dataset.i];
+      if (a.run) { b.disabled = true; try { const r = await a.run(bg); if (r === false) { b.disabled = false; return; } close(r === undefined ? a.value : r); } catch (err) { b.disabled = false; toast(err.message || String(err), 'bad'); } }
+      else close(a.value);
+    });
+    bg.addEventListener('keydown', e => { if (e.key === 'Escape') close(null); });
+    onOpen && onOpen(bg);
+    setTimeout(() => { const f = bg.querySelector('input:not([type=checkbox]):not([type=hidden]),textarea'); f && f.focus(); }, 50);
+  });
+}
+const confirmBox = (msg, ok = '확인', cls = 'pri') => modal({ title: '확인', body: `<p style="line-height:1.7;margin:0">${msg}</p>`, actions: [{ label: '취소', value: false }, { label: ok, value: true, cls }] });
+async function copy(text, label = '복사했어요') {
+  try { await navigator.clipboard.writeText(text); toast('📋 ' + label, 'ok'); }
+  catch { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast('📋 ' + label, 'ok'); }
+}
+function download(name, text, type = 'text/plain') {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+const csvCell = v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+const toCSV = rows => '﻿' + rows.map(r => r.map(csvCell).join(',')).join('\n');
+
+/* ---------------- 사이트(저장소) 데이터 ---------------- */
+function autoCat(n) {
+  const s = n.toLowerCase();
+  if (/hsk|chinese/.test(s)) return 'zh';
+  if (/jap/.test(s)) return 'ja';
+  if (/delf|french/.test(s)) return 'fr';
+  if (/latin|ital|arab|catal|russ|por_|german|korean/.test(s)) return 'lang';
+  if (/dainedu_(curriculum|intro|lms|budget)|lecture|marketing|my_site|site_main|dainers/.test(s)) return 'dainedu';
+  if (/dele|gdu|aula|spa|spanish|eco_|flex|snult|1500_|metodo|hoyeon|fayston|jiyu|conjug|tuescuela|ibs_|oral|speaking|grammar_12w|sample_class|pinterest/.test(s)) return 'es';
+  if (/eng|toeic|english|efe|makeget/.test(s)) return 'en';
+  if (/practice|apps|engines|maono|scribd|stock|etf|streamdeck/.test(s)) return 'tools';
+  if (/study|kastic|ksef|selfstudy|university|event4/.test(s)) return 'student';
+  if (/emotion|debt|inventos|frog|focus|enneagram|tarot|money|notes|speaking_mastery|growth|gpe|brain|saying/.test(s)) return 'hr';
+  if (/takamatsu|osaka|travel_guide/.test(s)) return 'life';
+  return 'etc';
+}
+function siteInfo(r) {
+  const id = r.id, doc = S.sites[id] || {}, cat = CATALOG[r.name] || CATALOG[id];
+  const local = S.meta[id] || {};
+  return {
+    ...r,
+    title: doc.title || local.title || (cat && cat[0]) || r.name,
+    cat: doc.category || local.category || (cat && cat[1]) || autoCat(r.name),
+    mode: doc.mode || S.cfg.options.defaultMode || 'public',
+    doc, check: S.checks[id] || {}
+  };
+}
+function allSites() { return S.repos.filter(r => r.name !== SELF && (S.f.all || r.pages)).map(siteInfo); }
+function pagesSites() { return S.repos.filter(r => r.name !== SELF && r.pages).map(siteInfo); }
+function siteById(id) { const r = S.repos.find(x => x.id === id); return r ? siteInfo(r) : { id, name: id, title: (S.sites[id] && S.sites[id].title) || id, cat: 'etc', mode: (S.sites[id] && S.sites[id].mode) || 'public', doc: S.sites[id] || {}, check: {} }; }
+const siteTitle = id => siteById(id).title;
+
+async function loadRepos(force = false) {
+  S.reposLoading = true; S.reposErr = ''; render();
+  const cached = LS.get('smc:repos', null);
+  if (!force && cached && Date.now() - cached.t < 3600e3) { S.repos = cached.list; S.reposLoading = false; render(); return; }
+  try {
+    const tok = getToken(); const list = [];
+    for (let page = 1; page <= 15; page++) {
+      const url = tok ? `https://api.github.com/user/repos?per_page=100&page=${page}&affiliation=owner&sort=pushed`
+                      : `https://api.github.com/users/${OWNER}/repos?per_page=100&page=${page}&sort=pushed`;
+      const r = await fetch(url, { headers: Object.assign({ Accept: 'application/vnd.github+json' }, tok ? { Authorization: 'Bearer ' + tok } : {}) });
+      if (!r.ok) throw new Error(`GitHub API ${r.status}${r.status === 403 ? ' (요청 한도 초과 — 토큰을 등록하면 해결돼요)' : ''}`);
+      const arr = await r.json(); list.push(...arr); if (arr.length < 100) break;
+    }
+    S.repos = list.filter(r => r.owner && r.owner.login.toLowerCase() === OWNER.toLowerCase()).map(r => ({
+      name: r.name, id: r.name.toLowerCase(), desc: r.description || '', pages: !!r.has_pages, priv: !!r.private,
+      branch: r.default_branch || 'main', pushed: r.pushed_at, created: r.created_at, lang: r.language || '', url: r.html_url, archived: r.archived
+    }));
+    LS.set('smc:repos', { t: Date.now(), list: S.repos });
+  } catch (e) {
+    S.reposErr = e.message;
+    if (cached) S.repos = cached.list;
+  }
+  S.reposLoading = false; render();
+}
+
+/* ----- 가드 설치 여부·접속 상태 점검 ----- */
+let checking = false;
+async function checkOne(r) {
+  const c = { t: Date.now() };
+  try {
+    const raw = await fetch(`https://raw.githubusercontent.com/${OWNER}/${r.name}/${r.branch}/index.html?cb=${Date.now()}`);
+    c.hasIndex = raw.ok;
+    if (raw.ok) c.guard = (await raw.text()).includes('site_main_control/guard.js'); else c.guard = null;
+  } catch { c.guard = null; }
+  const same = location.hostname.toLowerCase() === `${OWNER}.github.io`.toLowerCase();
+  const t0 = performance.now();
+  try {
+    const res = await fetch(pageUrl(r.name), same ? { cache: 'no-store' } : { mode: 'no-cors', cache: 'no-store' });
+    c.ms = Math.round(performance.now() - t0); c.status = same ? res.status : (res.type === 'opaque' ? 'ok' : res.status);
+  } catch { c.status = 'err'; }
+  S.checks[r.id] = c;
+}
+async function runChecks(list) {
+  if (checking) return toast('이미 점검 중이에요');
+  checking = true; let done = 0; const total = list.length; toast(`🔎 ${total}개 사이트 점검 시작`);
+  const queue = [...list];
+  const worker = async () => { while (queue.length) { const r = queue.shift(); await checkOne(r); done++; if (done % 6 === 0) { LS.set('smc:checks', S.checks); render(); } } };
+  await Promise.all(Array.from({ length: 6 }, worker));
+  LS.set('smc:checks', S.checks); checking = false; render(); toast(`✅ 점검 완료 (${total}개)`, 'ok');
+}
+
+/* ---------------- Firebase ---------------- */
+let unsubs = [];
+async function initFirebase() {
+  const c = S.cfg;
+  if (!c.firebase || !c.firebase.apiKey) { S.authReady = true; renderTop(); return; }
+  try {
+    const [A, Au, F] = await Promise.all([
+      import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-app.js`),
+      import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-auth.js`),
+      import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-firestore.js`)
+    ]);
+    const app = A.initializeApp(c.firebase, 'smc-admin');
+    const auth = Au.getAuth(app), db = F.getFirestore(app);
+    S.fb = { A, Au, F, app, auth, db };
+    F.onSnapshot(F.collection(db, 'sites'), snap => { S.sites = {}; snap.forEach(d => S.sites[d.id] = d.data()); render(); },
+      err => { console.warn(err); S.fbErr = err.code; renderTop(); });
+    Au.onAuthStateChanged(auth, u => {
+      S.user = u; S.authReady = true;
+      S.admin = !!(u && u.emailVerified && c.adminEmails.includes((u.email || '').toLowerCase()));
+      subscribeAdmin(); renderTop(); renderNav(); render();
+    });
+  } catch (e) { console.error(e); S.fbErr = e.message; S.authReady = true; renderTop(); toast('Firebase 연결 실패: ' + e.message, 'bad'); }
+}
+function subscribeAdmin() {
+  unsubs.forEach(u => u()); unsubs = [];
+  S.users = {}; S.groups = {}; S.requests = []; S.logs = []; S.logsLoaded = false;
+  if (!S.admin) return;
+  const { F, db } = S.fb;
+  const onErr = e => { console.warn(e); if (e.code === 'permission-denied') toast('권한 오류: Firestore 보안 규칙을 확인하세요 (설치·설정 4단계)', 'bad'); };
+  unsubs.push(F.onSnapshot(F.collection(db, 'users'), s => { S.users = {}; s.forEach(d => S.users[d.id] = d.data()); render(); }, onErr));
+  unsubs.push(F.onSnapshot(F.collection(db, 'groups'), s => { S.groups = {}; s.forEach(d => S.groups[d.id] = d.data()); render(); }, onErr));
+  unsubs.push(F.onSnapshot(F.collection(db, 'requests'), s => {
+    S.requests = []; s.forEach(d => S.requests.push({ id: d.id, ...d.data() }));
+    S.requests.sort((a, b) => (b.ts?.seconds || 0) - (a.ts?.seconds || 0)); renderNav(); render();
+  }, onErr));
+  loadLogs();
+}
+async function loadLogs(days = S.logDays) {
+  if (!S.admin) return;
+  const { F, db } = S.fb; S.logDays = days;
+  try {
+    const since = new Date(Date.now() - days * 864e5);
+    const q = F.query(F.collection(db, 'logs'), F.where('ts', '>=', F.Timestamp.fromDate(since)), F.orderBy('ts', 'desc'), F.limit(5000));
+    const s = await F.getDocs(q);
+    S.logs = s.docs.map(d => ({ id: d.id, ...d.data() })); S.logsLoaded = true; render();
+  } catch (e) { console.warn(e); S.logsLoaded = true; render(); }
+}
+function needAdmin() {
+  if (!S.fb) { toast('먼저 [설치·설정]에서 Firebase를 연결하세요', 'bad'); go('setup'); return false; }
+  if (!S.admin) { toast('관리자 로그인이 필요해요', 'bad'); return false; }
+  return true;
+}
+const fx = () => S.fb.F;
+const dref = (col, id) => fx().doc(S.fb.db, col, id);
+async function saveSite(id, data) {
+  if (!needAdmin()) return false;
+  const r = S.repos.find(x => x.id === id);
+  await fx().setDoc(dref('sites', id), { ...data, repo: r ? r.name : id, updatedAt: fx().serverTimestamp() }, { merge: true });
+  return true;
+}
+async function setMode(ids, mode) {
+  if (!needAdmin()) return;
+  const { F, db } = S.fb; const batch = F.writeBatch(db);
+  ids.forEach(id => { const r = S.repos.find(x => x.id === id); batch.set(F.doc(db, 'sites', id), { mode, repo: r ? r.name : id, updatedAt: F.serverTimestamp() }, { merge: true }); });
+  await batch.commit();
+  toast(`${MODES[mode].ico} ${ids.length}개 사이트 → ${MODES[mode].label}`, 'ok');
+  const noGuard = ids.filter(id => mode !== 'public' && S.checks[id] && S.checks[id].guard === false);
+  if (noGuard.length) setTimeout(() => toast(`⚠️ ${noGuard.length}개는 가드가 아직 설치되지 않아 보호되지 않아요`, 'bad'), 600);
+}
+
+/* ----- 권한 계산 ----- */
+function userState(u) {
+  if (!u) return 'none';
+  if (u.status === 'suspended') return 'suspended';
+  if (u.expiresAt && u.expiresAt < today()) return 'expired';
+  return 'active';
+}
+function userHasSite(u, sid, mode = 'private') {
+  if (userState(u) !== 'active') return false;
+  if (mode === 'members' || u.allSites || (u.sites || []).includes(sid)) return true;
+  return (u.groups || []).some(g => { const G = S.groups[g]; return G && !(G.expiresAt && G.expiresAt < today()) && (G.allSites || (G.sites || []).includes(sid)); });
+}
+function siteAccess(sid) {
+  const groups = Object.entries(S.groups).filter(([, G]) => G.allSites || (G.sites || []).includes(sid)).map(([id]) => id);
+  const direct = Object.entries(S.users).filter(([, u]) => u.allSites || (u.sites || []).includes(sid)).map(([e]) => e);
+  const total = Object.values(S.users).filter(u => userHasSite(u, sid)).length;
+  return { groups, direct, total };
+}
+function visitsBySite(days = 30) {
+  const since = Date.now() - days * 864e5, m = {};
+  S.logs.forEach(l => { const d = tsDate(l.ts); if (d && d.getTime() >= since && l.result !== 'denied') m[l.site] = (m[l.site] || 0) + 1; });
+  return m;
+}
+
+/* ---------------- GitHub (토큰 필요 작업) ---------------- */
+const getToken = () => LS.get('smc:ghToken', '');
+async function gh(path, opts = {}) {
+  const tok = getToken(); if (!tok) throw new Error('GitHub 토큰이 필요해요 ([설치·설정] 5단계)');
+  const r = await fetch('https://api.github.com' + path, {
+    ...opts, headers: { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(opts.body ? { 'Content-Type': 'application/json' } : {}) }
+  });
+  if (!r.ok) { let m = ''; try { m = (await r.json()).message; } catch {} const e = new Error(`GitHub ${r.status}: ${m}`); e.status = r.status; throw e; }
+  return r.status === 204 ? null : r.json();
+}
+function b64enc(str) { const bytes = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(bin); }
+function b64dec(b64) { const bin = atob(b64.replace(/\s/g, '')); const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); return new TextDecoder().decode(bytes); }
+async function putFile(repo, path, content, message) {
+  let sha; try { sha = (await gh(`/repos/${OWNER}/${repo}/contents/${encodeURIComponent(path)}`)).sha; } catch (e) { if (e.status !== 404) throw e; }
+  return gh(`/repos/${OWNER}/${repo}/contents/${encodeURIComponent(path)}`, { method: 'PUT', body: JSON.stringify({ message, content: b64enc(content), sha }) });
+}
+const GUARD_RE = /\n?[ \t]*<script[^>]*site_main_control\/guard\.js[^>]*><\/script>(?:<\!-- smc-guard -->)?/gi;
+function guardTag(repo) { return `<script src="${GUARD_SRC}" data-site="${repo}"><\/script><\!-- smc-guard -->`; }
+function addGuard(html, repo) {
+  const tag = guardTag(repo);
+  if (/site_main_control\/guard\.js/.test(html)) { const out = html.replace(GUARD_RE, ''); return insertTag(out, tag); }
+  return insertTag(html, tag);
+}
+function insertTag(html, tag) {
+  const m = html.match(/<head(\s[^>]*)?>/i);
+  if (m) return html.replace(m[0], m[0] + '\n' + tag);
+  const h = html.match(/<html(\s[^>]*)?>/i);
+  if (h) return html.replace(h[0], h[0] + '\n' + tag);
+  return tag + '\n' + html;
+}
+const removeGuard = html => html.replace(GUARD_RE, '');
+async function patchRepo(repo, remove = false, onFile) {
+  const info = await gh(`/repos/${OWNER}/${repo}`);
+  const branch = info.default_branch;
+  const ref = await gh(`/repos/${OWNER}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
+  const commit = await gh(`/repos/${OWNER}/${repo}/git/commits/${ref.object.sha}`);
+  const tree = await gh(`/repos/${OWNER}/${repo}/git/trees/${commit.tree.sha}?recursive=1`);
+  const files = tree.tree.filter(t => t.type === 'blob' && /\.html?$/i.test(t.path) && !/(^|\/)(node_modules|\.git|vendor)\//.test(t.path));
+  const changes = [];
+  for (const f of files) {
+    const blob = await gh(`/repos/${OWNER}/${repo}/git/blobs/${f.sha}`);
+    const text = b64dec(blob.content);
+    const out = remove ? removeGuard(text) : addGuard(text, repo);
+    if (out !== text) changes.push({ path: f.path, mode: f.mode || '100644', type: 'blob', content: out });
+    onFile && onFile(f.path);
+  }
+  if (!changes.length) return { files: files.length, changed: 0 };
+  const nt = await gh(`/repos/${OWNER}/${repo}/git/trees`, { method: 'POST', body: JSON.stringify({ base_tree: commit.tree.sha, tree: changes }) });
+  const nc = await gh(`/repos/${OWNER}/${repo}/git/commits`, { method: 'POST', body: JSON.stringify({ message: remove ? 'Site Main Control: 접속 관리 가드 제거' : 'Site Main Control: 접속 관리 가드 설치', tree: nt.sha, parents: [ref.object.sha] }) });
+  await gh(`/repos/${OWNER}/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, { method: 'PATCH', body: JSON.stringify({ sha: nc.sha }) });
+  return { files: files.length, changed: changes.length };
+}
+async function guardBulk(ids, remove = false) {
+  if (!getToken()) { toast('GitHub 토큰을 먼저 등록하세요', 'bad'); go('setup'); return; }
+  const list = ids.map(id => S.repos.find(r => r.id === id)).filter(Boolean);
+  if (!list.length) return;
+  const ok = await confirmBox(`<b>${list.length}개</b> 사이트의 모든 HTML 파일에 가드를 ${remove ? '<b>제거</b>' : '<b>설치</b>'}합니다.<br><span class="muted small">저장소마다 커밋 1개가 생기고, 반영까지 1~2분 걸려요. ${remove ? '' : '사이트 모드가 [공개]면 화면은 그대로예요.'}</span>`, remove ? '제거하기' : '설치하기', remove ? 'bad' : 'pri');
+  if (!ok) return;
+  const bg = document.createElement('div'); bg.className = 'modal-bg';
+  bg.innerHTML = `<div class="modal"><div class="mh"><h3>${remove ? '가드 제거' : '가드 설치'} 진행 중…</h3></div><div class="mb"><div class="prog"><div id="pgb" style="width:0"></div></div><p class="small muted" id="pgt" style="margin:10px 0"></p><div id="pgl" style="max-height:300px;overflow:auto;font-size:12px;line-height:1.8"></div></div><div class="mf"><button class="btn" id="pgc" disabled>닫기</button></div></div>`;
+  $('#modalRoot').appendChild(bg);
+  let i = 0, okN = 0, failN = 0;
+  for (const r of list) {
+    i++; $('#pgt', bg).textContent = `${i}/${list.length} · ${r.name}`;
+    try {
+      const res = await patchRepo(r.name, remove, p => { $('#pgt', bg).textContent = `${i}/${list.length} · ${r.name} · ${p}`; });
+      okN++; $('#pgl', bg).insertAdjacentHTML('beforeend', `<div>✅ <b>${esc(r.name)}</b> — HTML ${res.files}개 중 ${res.changed}개 수정</div>`);
+      S.checks[r.id] = Object.assign(S.checks[r.id] || {}, { guard: !remove, t: Date.now() });
+    } catch (e) { failN++; $('#pgl', bg).insertAdjacentHTML('beforeend', `<div style="color:var(--bad)">❌ <b>${esc(r.name)}</b> — ${esc(e.message)}</div>`); }
+    $('#pgb', bg).style.width = (i / list.length * 100) + '%';
+  }
+  LS.set('smc:checks', S.checks);
+  $('#pgt', bg).textContent = `완료: 성공 ${okN} · 실패 ${failN}. GitHub Pages 반영까지 1~2분 걸려요.`;
+  const c = $('#pgc', bg); c.disabled = false; c.onclick = () => { bg.remove(); render(); };
+}
+
+/* ---------------- 라우팅 & 레이아웃 ---------------- */
+const NAV = [
+  ['dashboard', '📊', '대시보드'], ['sites', '🌐', '사이트'], ['users', '👤', '회원'], ['groups', '🧩', '그룹(반)'],
+  ['requests', '📨', '접근 요청'], ['logs', '📜', '접속 기록'], ['setup', '⚙️', '설치·설정'], ['help', '❓', '사용 안내']
+];
+function go(v) { location.hash = v; }
+window.addEventListener('hashchange', () => { S.view = location.hash.slice(1) || 'dashboard'; S.sel.clear(); $('#side').classList.remove('open'); renderNav(); renderTop(); render(); window.scrollTo(0, 0); });
+function renderNav() {
+  const counts = { sites: pagesSites().length || '', users: S.admin ? Object.keys(S.users).length : '', groups: S.admin ? Object.keys(S.groups).length : '', requests: S.requests.length || '' };
+  $('#navList').innerHTML = NAV.map(([id, ic, lb]) => `<button class="nav ${S.view === id ? 'on' : ''}" data-act="nav" data-v="${id}"><span class="i">${ic}</span>${lb}${counts[id] !== undefined && counts[id] !== '' ? `<span class="c ${id === 'requests' && counts[id] ? 'hot' : ''}">${counts[id]}</span>` : ''}</button>`).join('');
+}
+function renderTop() {
+  const c = S.cfg; const nav = NAV.find(n => n[0] === S.view) || NAV[0];
+  let st;
+  if (!c.firebase || !c.firebase.apiKey) st = `<span class="pill warn"><span class="dot"></span>접속 관리 미설정</span>`;
+  else if (S.fbErr) st = `<span class="pill bad" title="${esc(S.fbErr)}"><span class="dot"></span>Firebase 오류</span>`;
+  else if (c.draft) st = `<span class="pill warn" title="config.js에 아직 저장되지 않았어요"><span class="dot"></span>테스트 설정</span>`;
+  else st = `<span class="pill ok"><span class="dot"></span>접속 관리 작동 중</span>`;
+  let who = '';
+  if (S.fb) {
+    if (!S.authReady) who = '';
+    else if (S.user) who = `<span class="pill ${S.admin ? 'ok' : 'bad'} hide-m" title="${esc(S.user.email)}">${S.admin ? '👑 관리자' : '⚠️ 관리자 아님'} · ${esc(S.user.email)}</span><button class="btn sm" data-act="logout">로그아웃</button>`;
+    else who = `<button class="btn pri sm" data-act="login">🔐 관리자 로그인</button>`;
+  }
+  $('#top').innerHTML = `<button class="btn ic" id="menuBtn" data-act="menu">☰</button><h1>${nav[1]} ${nav[2]}</h1><span class="sp"></span>${st}${who}
+    <button class="btn ic" data-act="theme" title="다크 모드">${document.documentElement.dataset.theme === 'dark' ? '☀️' : '🌙'}</button>`;
+}
+let rq = 0;
+function render() {
+  if (rq) return;
+  rq = requestAnimationFrame(() => {
+    rq = 0;
+    const a = document.activeElement; const id = a && a.id && $('#main').contains(a) ? a.id : null;
+    let ss, se; try { ss = a.selectionStart; se = a.selectionEnd; } catch {}
+    const fn = VIEWS[S.view] || VIEWS.dashboard;
+    $('#main').innerHTML = fn();
+    if (id) { const el = document.getElementById(id); if (el) { el.focus(); try { el.setSelectionRange(ss, se); } catch {} } }
+    if (S.drawer) renderDrawer();
+    renderNav();
+  });
+}
+
+/* ---------------- 공통 조각 ---------------- */
+const modeSelect = (s, disabled) => `<select class="mode m-${s.mode}" data-chg="mode" data-id="${s.id}" ${disabled ? 'disabled title="관리자 로그인 후 변경할 수 있어요"' : ''}>${Object.entries(MODES).map(([k, m]) => `<option value="${k}" ${s.mode === k ? 'selected' : ''}>${m.ico} ${m.label}</option>`).join('')}</select>`;
+function guardBadge(c) {
+  if (!c || c.guard === undefined) return `<span class="tag" title="아직 점검 안 함">미점검</span>`;
+  if (c.guard === true) return `<span class="tag b-ok" title="index.html에 가드 있음">🛡️ 설치됨</span>`;
+  if (c.guard === false) return `<span class="tag b-warn" title="가드가 없어서 모드 설정이 적용되지 않아요">미설치</span>`;
+  return `<span class="tag" title="index.html을 찾지 못했어요">확인 불가</span>`;
+}
+function healthBadge(c) {
+  if (!c || c.status === undefined) return `<span class="mute">—</span>`;
+  if (c.status === 200 || c.status === 'ok') return `<span class="tag b-ok">● ${c.ms ? c.ms + 'ms' : '정상'}</span>`;
+  if (c.status === 404) return `<span class="tag b-bad">● 404</span>`;
+  return `<span class="tag b-bad">● ${esc(c.status)}</span>`;
+}
+const catTag = c => `<span class="tag">${CATS[c] || CATS.etc}</span>`;
+const groupTag = gid => { const G = S.groups[gid]; return G ? `<span class="tag g" style="background:${G.color || '#6366f1'}">${esc(G.name)}</span>` : ''; };
+const resultTag = l => { const r = RESULTS[l.result] || [l.result, '']; return `<span class="tag ${r[1]}">${r[0]}</span>`; };
+const userStateTag = u => ({ active: '<span class="tag b-ok">활성</span>', suspended: '<span class="tag b-bad">정지</span>', expired: '<span class="tag b-warn">만료</span>' })[userState(u)] || '';
+function needLoginCard(what) {
+  if (!S.cfg.firebase || !S.cfg.firebase.apiKey) return `<div class="card pad empty"><div class="e">⚙️</div><b>접속 관리가 아직 설정되지 않았어요</b><p>${what} 관리를 하려면 먼저 Firebase를 연결해야 해요. 약 10분이면 끝나요.</p><button class="btn pri" data-act="nav" data-v="setup">설치·설정 시작하기 →</button></div>`;
+  if (!S.authReady) return `<div class="card pad empty"><div class="e">⏳</div>연결 중…</div>`;
+  if (!S.user) return `<div class="card pad empty"><div class="e">🔐</div><b>관리자 로그인이 필요해요</b><p>${what} 정보는 관리자만 볼 수 있어요.</p><button class="btn pri" data-act="login">관리자 로그인</button></div>`;
+  return `<div class="card pad empty"><div class="e">⚠️</div><b>${esc(S.user.email)} 계정은 관리자가 아니에요</b><p>config.js의 관리자 이메일 목록에 이 계정을 추가하거나 다른 계정으로 로그인하세요.${S.user.emailVerified ? '' : '<br>(이메일 인증이 완료되지 않은 계정이에요)'}</p><button class="btn" data-act="logout">다른 계정으로 로그인</button></div>`;
+}
+function sitePicker(name, selected = [], opts = {}) {
+  const sel = new Set(selected); const list = pagesSites().sort((a, b) => a.title.localeCompare(b.title, 'ko'));
+  const byCat = {}; list.forEach(s => (byCat[s.cat] = byCat[s.cat] || []).push(s));
+  return `<div class="picker" data-picker="${name}"><div class="ph"><div class="search" style="max-width:none"><input placeholder="사이트 검색…" data-psearch="${name}"></div>
+    <span class="small muted" data-pcount="${name}">${sel.size}개 선택</span><button type="button" class="btn sm" data-act="pickAll" data-n="${name}">보이는 것 전체</button><button type="button" class="btn sm" data-act="pickNone" data-n="${name}">해제</button></div>
+    <div class="pb">${Object.keys(CATS).filter(c => byCat[c]).map(c => `<div class="pc" data-pcat>${CATS[c]} <button type="button" class="btn sm ghost" data-act="pickCat" data-n="${name}" data-c="${c}">카테고리 선택</button></div>` +
+      byCat[c].map(s => `<label class="pi" data-pname="${esc((s.title + ' ' + s.name).toLowerCase())}" data-pc="${c}"><input type="checkbox" name="${name}" value="${s.id}" ${sel.has(s.id) ? 'checked' : ''}> ${esc(s.title)} <small>${esc(s.name)} · ${MODES[s.mode].ico}</small></label>`).join('')).join('')}
+    ${!list.length ? '<div class="empty small">사이트 목록을 불러오는 중이거나 없어요</div>' : ''}</div></div>`;
+}
+const pickedValues = (root, name) => $$(`input[name="${name}"]:checked`, root).map(i => i.value);
+function groupChips(name, selected = []) {
+  const gs = Object.entries(S.groups).sort((a, b) => (a[1].name || '').localeCompare(b[1].name || '', 'ko'));
+  if (!gs.length) return `<span class="small muted">그룹이 아직 없어요. [그룹(반)] 메뉴에서 만들 수 있어요.</span>`;
+  return `<div class="chips">${gs.map(([id, G]) => `<label class="chip"><input type="checkbox" name="${name}" value="${id}" ${selected.includes(id) ? 'checked' : ''}><span class="sw" style="background:${G.color || '#6366f1'}"></span>${esc(G.name)}</label>`).join('')}</div>`;
+}
+function qrSvg(text) {
+  if (!window.qrcode) return '<p class="muted">QR 라이브러리를 불러오는 중이에요. 잠시 후 다시 시도하세요.</p>';
+  const q = window.qrcode(0, 'M'); q.addData(text); q.make(); return q.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
+}
+function studentNotice(s) {
+  const mode = s.mode;
+  const how = (mode === 'public') ? '로그인 없이 바로 열려요.' :
+    '처음 열면 로그인 화면이 나와요. 선생님께 알려드린 이메일(Google 계정)로 로그인하세요.\n· Google 계정이면 [Google 계정으로 로그인] 버튼\n· 다른 이메일이면 [처음이에요(가입)] → 인증 메일 확인 후 로그인\n· 카카오톡에서 열면 Google 로그인이 막히니 [외부 브라우저로 열기]를 눌러 주세요.';
+  return `📚 ${s.title}\n🔗 ${pageUrl(s.name)}\n\n${how}\n\n권한이 없다고 나오면 화면의 [접근 요청 보내기]를 눌러 주세요.`;
+}
+
+/* ==========================================================================
+   화면들
+   ========================================================================== */
+const VIEWS = {};
+
+/* ---------- 대시보드 ---------- */
+VIEWS.dashboard = () => {
+  const sites = pagesSites(); const c = S.cfg;
+  const prot = sites.filter(s => s.mode !== 'public').length;
+  const checked = sites.filter(s => s.check.guard !== undefined).length;
+  const guarded = sites.filter(s => s.check.guard === true).length;
+  const down = sites.filter(s => s.check.status && s.check.status !== 200 && s.check.status !== 'ok').length;
+  const users = Object.values(S.users); const active = users.filter(u => userState(u) === 'active').length;
+  const d0 = today();
+  const todayLogs = S.logs.filter(l => { const d = tsDate(l.ts); return d && d.toLocaleDateString('sv-SE') === d0; });
+  const denied7 = S.logs.filter(l => l.result === 'denied' && tsDate(l.ts) && Date.now() - tsDate(l.ts).getTime() < 7 * 864e5);
+  const notSet = !c.firebase || !c.firebase.apiKey;
+  let h = '';
+  if (notSet) h += `<div class="card pad setup" style="margin-bottom:16px"><h2 style="margin:0 0 6px">👋 환영합니다! 사이트 접속 관리를 켜 볼까요?</h2>
+    <p style="margin:0 0 14px">지금도 ${sites.length}개 사이트 목록·상태 점검·링크·QR은 바로 쓸 수 있어요. 유저별 접속 관리를 하려면 무료 Firebase 연결(약 10분)이 필요해요.</p>
+    <button class="btn" data-act="nav" data-v="setup">설치·설정 시작하기 →</button></div>`;
+  else if (S.fb && S.authReady && !S.admin) h += `<div class="banner info">🔐 <div class="g">관리자로 로그인하면 회원·기록·요청 정보까지 보여요.</div>${S.user ? '' : '<button class="btn pri sm" data-act="login">관리자 로그인</button>'}</div>`;
+  if (S.reposErr) h += `<div class="banner warn">⚠️ <div>${esc(S.reposErr)}</div></div>`;
+
+  h += `<div class="grid kpis">
+    <div class="card kpi"><div class="l">🌐 전체 사이트</div><div class="v">${S.reposLoading && !sites.length ? '…' : sites.length}</div><div class="s">GitHub Pages 공개 사이트</div></div>
+    <div class="card kpi"><div class="l">🔒 보호 중</div><div class="v">${prot}</div><div class="s">공개 ${sites.length - prot} · 보호 ${prot}</div></div>
+    <div class="card kpi"><div class="l">🛡️ 가드 설치</div><div class="v">${guarded}<span class="small muted"> / ${checked || '—'}</span></div><div class="s">${checked ? '점검한 사이트 기준' : '<a href="#sites">[사이트]에서 점검하기</a>'}</div></div>
+    <div class="card kpi"><div class="l">👤 회원</div><div class="v">${S.admin ? users.length : '—'}</div><div class="s">${S.admin ? `활성 ${active} · 그룹 ${Object.keys(S.groups).length}` : '관리자 전용'}</div></div>
+    <div class="card kpi"><div class="l">📈 오늘 접속</div><div class="v">${S.admin ? todayLogs.length : '—'}</div><div class="s">${S.admin ? `이용자 ${uniq(todayLogs.map(l => l.email)).length}명` : '관리자 전용'}</div></div>
+    <div class="card kpi"><div class="l">🚫 거부(7일)</div><div class="v" style="color:${denied7.length ? 'var(--bad)' : 'inherit'}">${S.admin ? denied7.length : '—'}</div><div class="s">${S.admin ? `대기 요청 ${S.requests.length}건` : '관리자 전용'}</div></div>
+  </div>`;
+
+  // 차트
+  const days = []; for (let i = 13; i >= 0; i--) days.push(addDays(-i));
+  const agg = Object.fromEntries(days.map(d => [d, { ok: 0, no: 0 }]));
+  S.logs.forEach(l => { const d = tsDate(l.ts); if (!d) return; const k = d.toLocaleDateString('sv-SE'); if (agg[k]) agg[k][l.result === 'denied' ? 'no' : 'ok']++; });
+  const max = Math.max(1, ...days.map(d => agg[d].ok + agg[d].no));
+  const chart = `<div class="bars">${days.map(d => { const a = agg[d]; return `<div class="col"><div class="tip">${d.slice(5)} · 접속 ${a.ok} · 거부 ${a.no}</div>
+      <div class="seg" style="height:${a.no / max * 100}%;background:#f87171"></div><div class="seg" style="height:${a.ok / max * 100}%;background:linear-gradient(#818cf8,#6366f1);border-radius:${a.no ? 0 : '4px 4px'} 0 0"></div><div class="lb">${+d.slice(8)}</div></div>`; }).join('')}</div>
+      <div class="small muted" style="margin-top:6px">■ <span style="color:#6366f1">접속</span> ■ <span style="color:#f87171">거부</span> · 최근 14일</div>`;
+  const vb = visitsBySite(30); const top = Object.entries(vb).sort((a, b) => b[1] - a[1]).slice(0, 8); const tmax = top.length ? top[0][1] : 1;
+  const modeCount = Object.keys(MODES).map(k => [k, sites.filter(s => s.mode === k).length]);
+
+  h += `<div class="grid cols2" style="margin-top:14px">
+    <div class="card pad"><h3 class="t">📈 접속 추이</h3>${S.admin ? chart : '<div class="empty small">관리자 로그인 후 볼 수 있어요</div>'}</div>
+    <div class="card pad"><h3 class="t">🏆 인기 사이트 (30일)</h3>${S.admin ? (top.length ? top.map(([id, v]) => `<div class="hbar"><span class="n" title="${esc(id)}">${esc(siteTitle(id))}</span><span class="tr"><span class="fl" style="width:${v / tmax * 100}%;display:block"></span></span><span class="v">${v}</span></div>`).join('') : '<div class="empty small">아직 기록이 없어요</div>') : '<div class="empty small">관리자 전용</div>'}</div>
+  </div>
+  <div class="grid cols3" style="margin-top:14px">
+    <div class="card pad"><h3 class="t">🧭 모드별 사이트</h3>${modeCount.map(([k, n]) => `<div class="li"><span>${MODES[k].ico}</span><div class="g">${MODES[k].label} <span class="small mute">${MODES[k].desc}</span></div><b>${n}</b></div>`).join('')}
+      ${down ? `<div class="banner warn" style="margin:10px 0 0">● 응답 이상 사이트 ${down}개 — <a href="#sites">확인</a></div>` : ''}</div>
+    <div class="card pad"><h3 class="t">📨 대기 중인 요청<span class="sp"></span><a class="small" href="#requests">전체</a></h3>${S.admin ? (S.requests.length ? S.requests.slice(0, 5).map(r => `<div class="li"><div class="g"><div class="b ellip">${esc(r.name || r.email)}</div><div class="small muted ellip">${esc(siteTitle(r.site))} · ${ago(r.ts)}</div></div><button class="btn sm pri" data-act="reqApprove" data-id="${esc(r.id)}">승인</button></div>`).join('') : '<div class="empty small">대기 요청이 없어요 🎉</div>') : '<div class="empty small">관리자 전용</div>'}</div>
+    <div class="card pad"><h3 class="t">⏰ 7일 안에 만료되는 회원</h3>${S.admin ? (() => { const soon = Object.entries(S.users).filter(([, u]) => u.expiresAt && u.expiresAt >= d0 && u.expiresAt <= addDays(7)).sort((a, b) => a[1].expiresAt.localeCompare(b[1].expiresAt)); return soon.length ? soon.slice(0, 6).map(([e, u]) => `<div class="li"><div class="g"><div class="b ellip">${esc(u.name || e)}</div><div class="small muted">${esc(u.expiresAt)}</div></div><button class="btn sm" data-act="extend" data-id="${esc(e)}" data-m="1">+1개월</button></div>`).join('') : '<div class="empty small">만료 임박 회원 없음</div>'; })() : '<div class="empty small">관리자 전용</div>'}</div>
+  </div>`;
+  if (S.admin) {
+    const recentDenied = S.logs.filter(l => l.result === 'denied').slice(0, 6);
+    h += `<div class="card pad" style="margin-top:14px"><h3 class="t">🚫 최근 거부된 접속<span class="sp"></span><a class="small" href="#logs">전체 기록</a></h3>
+      ${recentDenied.length ? `<table class="tb"><tbody>${recentDenied.map(l => `<tr><td class="small muted" style="width:120px">${fmtDT(l.ts)}</td><td class="b">${esc(l.email)}</td><td>${esc(siteTitle(l.site))}</td><td><span class="tag b-bad">${REASONS[l.reason] || esc(l.reason)}</span></td><td style="text-align:right">${l.email !== 'anonymous' ? `<button class="btn sm" data-act="grantFromLog" data-email="${esc(l.email)}" data-site="${esc(l.site)}">✅ 바로 허용</button>` : ''}</td></tr>`).join('')}</tbody></table>` : '<div class="empty small">거부된 접속이 없어요</div>'}</div>`;
+  }
+  return h;
+};
+
+/* ---------- 사이트 ---------- */
+function filteredSites() {
+  const f = S.f; const q = f.q.trim().toLowerCase(); const vb = visitsBySite(30);
+  let list = allSites().map(s => ({ ...s, visits: vb[s.id] || 0 }));
+  if (q) list = list.filter(s => (s.title + ' ' + s.name + ' ' + s.desc + ' ' + (s.doc.note || '')).toLowerCase().includes(q));
+  if (f.cat !== 'all') list = list.filter(s => s.cat === f.cat);
+  if (f.mode !== 'all') list = list.filter(s => f.mode === 'protected' ? s.mode !== 'public' : s.mode === f.mode);
+  if (f.guard !== 'all') list = list.filter(s => f.guard === 'on' ? s.check.guard === true : f.guard === 'off' ? s.check.guard === false : s.check.guard === undefined);
+  if (f.favOnly) list = list.filter(s => S.favs.has(s.id));
+  const sorters = {
+    pushed: (a, b) => (b.pushed || '').localeCompare(a.pushed || ''), name: (a, b) => a.title.localeCompare(b.title, 'ko'),
+    created: (a, b) => (b.created || '').localeCompare(a.created || ''), visits: (a, b) => b.visits - a.visits, mode: (a, b) => Object.keys(MODES).indexOf(b.mode) - Object.keys(MODES).indexOf(a.mode)
+  };
+  list.sort(sorters[f.sort] || sorters.pushed);
+  list.sort((a, b) => (S.favs.has(b.id) ? 1 : 0) - (S.favs.has(a.id) ? 1 : 0));
+  return list;
+}
+VIEWS.sites = () => {
+  const f = S.f; const list = filteredSites(); const canEdit = S.admin;
+  const catCounts = {}; allSites().forEach(s => catCounts[s.cat] = (catCounts[s.cat] || 0) + 1);
+  let h = '';
+  if (!S.cfg.firebase || !S.cfg.firebase.apiKey) h += `<div class="banner warn">⚙️ <div class="g">지금은 <b>목록·점검·링크·QR</b>만 쓸 수 있어요. 접속 모드를 바꾸려면 Firebase를 연결하세요.</div><button class="btn sm" data-act="nav" data-v="setup">설정하기</button></div>`;
+  else if (!canEdit && S.authReady) h += `<div class="banner info">🔐 <div class="g">모드를 바꾸려면 관리자 로그인이 필요해요.</div>${S.user ? '' : '<button class="btn pri sm" data-act="login">로그인</button>'}</div>`;
+  h += `<div class="toolbar">
+    <div class="search"><input id="sq" placeholder="사이트 이름·저장소·메모 검색  ( / )" value="${esc(f.q)}" data-in="sq"></div>
+    <select class="f" data-chg="fcat"><option value="all">전체 카테고리</option>${Object.entries(CATS).filter(([k]) => catCounts[k]).map(([k, v]) => `<option value="${k}" ${f.cat === k ? 'selected' : ''}>${v} (${catCounts[k]})</option>`).join('')}</select>
+    <select class="f" data-chg="fmode"><option value="all">모든 모드</option><option value="protected" ${f.mode === 'protected' ? 'selected' : ''}>🔐 보호 중(공개 제외)</option>${Object.entries(MODES).map(([k, m]) => `<option value="${k}" ${f.mode === k ? 'selected' : ''}>${m.ico} ${m.label}</option>`).join('')}</select>
+    <select class="f" data-chg="fguard"><option value="all">가드 전체</option><option value="on" ${f.guard === 'on' ? 'selected' : ''}>🛡️ 설치됨</option><option value="off" ${f.guard === 'off' ? 'selected' : ''}>미설치</option><option value="unk" ${f.guard === 'unk' ? 'selected' : ''}>미점검</option></select>
+    <select class="f" data-chg="fsort"><option value="pushed" ${f.sort === 'pushed' ? 'selected' : ''}>최근 수정순</option><option value="created" ${f.sort === 'created' ? 'selected' : ''}>최근 생성순</option><option value="name" ${f.sort === 'name' ? 'selected' : ''}>이름순</option><option value="visits" ${f.sort === 'visits' ? 'selected' : ''}>방문 많은순</option><option value="mode" ${f.sort === 'mode' ? 'selected' : ''}>보호 모드순</option></select>
+    <button class="btn ${f.favOnly ? 'pri' : ''}" data-act="favOnly">⭐ 즐겨찾기</button>
+    <span style="flex:1"></span>
+    <button class="btn" data-act="checkAll" title="모든 사이트의 가드 설치 여부와 응답 상태를 점검">🔎 전체 점검</button>
+    <button class="btn ic" data-act="reloadRepos" title="GitHub에서 목록 새로고침">🔄</button>
+    <button class="btn ic" data-act="layout" title="보기 전환">${f.layout === 'table' ? '▦' : '☰'}</button>
+  </div>
+  <div class="small muted" style="margin:-4px 0 10px">${list.length}개 표시 · <label style="cursor:pointer"><input type="checkbox" data-chg="fall" ${f.all ? 'checked' : ''}> Pages 없는 저장소도 보기</label>${S.reposLoading ? ' · 불러오는 중…' : ''}</div>`;
+  if (S.sel.size) h += `<div class="bulk"><b>${S.sel.size}개 선택</b>
+    <select data-chg="bulkMode" ${canEdit ? '' : 'disabled'}><option value="">모드 일괄 변경…</option>${Object.entries(MODES).map(([k, m]) => `<option value="${k}">${m.ico} ${m.label}</option>`).join('')}</select>
+    ${S.admin && Object.keys(S.groups).length ? `<select data-chg="bulkGroup"><option value="">그룹에 사이트 추가…</option>${Object.entries(S.groups).map(([id, G]) => `<option value="${id}">${esc(G.name)}</option>`).join('')}</select>` : ''}
+    <button class="btn sm" data-act="bulkGuard">🛡️ 가드 설치</button><button class="btn sm" data-act="bulkUnguard">가드 제거</button>
+    <button class="btn sm" data-act="bulkCheck">🔎 점검</button><button class="btn sm" data-act="bulkLinks">🔗 링크 모음 복사</button>
+    <span style="flex:1"></span><button class="btn sm" data-act="selNone">선택 해제</button></div>`;
+  if (!list.length) return h + `<div class="card empty"><div class="e">${S.reposLoading ? '⏳' : '🔍'}</div>${S.reposLoading ? 'GitHub에서 사이트 목록을 불러오는 중…' : '조건에 맞는 사이트가 없어요'}</div>`;
+  const acc = id => { if (!S.admin) return '<span class="mute">—</span>'; const a = siteAccess(id); return `<span class="small" title="그룹 ${a.groups.length} · 개별 ${a.direct.length}">${a.total}명</span>`; };
+  const actions = s => `<a class="btn sm ic" href="${pageUrl(s.name)}" target="_blank" rel="noopener" title="사이트 열기">↗</a><button class="btn sm ic" data-act="copyLink" data-id="${s.id}" title="링크 복사">🔗</button><button class="btn sm ic" data-act="qr" data-id="${s.id}" title="QR 코드">▣</button><button class="btn sm" data-act="open" data-id="${s.id}">관리</button>`;
+  if (f.layout === 'cards') {
+    h += `<div class="cards">${list.map(s => `<div class="card scard ${S.sel.has(s.id) ? 'selr' : ''}" style="${S.sel.has(s.id) ? 'outline:2px solid var(--pri)' : ''}">
+      <div class="hd"><input type="checkbox" data-act="sel" data-id="${s.id}" ${S.sel.has(s.id) ? 'checked' : ''}><div class="nm"><div class="t1">${esc(s.title)}</div><div class="t2">${esc(s.name)}${s.priv ? ' · 🔏비공개 저장소' : ''}</div></div><button class="star ${S.favs.has(s.id) ? 'on' : ''}" data-act="fav" data-id="${s.id}">⭐</button></div>
+      <div class="ft">${catTag(s.cat)} ${guardBadge(s.check)} ${healthBadge(s.check)} ${s.visits ? `<span class="tag">👁 ${s.visits}</span>` : ''}</div>
+      <div class="ft">${modeSelect(s, !canEdit)} <span class="small muted">${S.admin ? siteAccess(s.id).total + '명 접근' : ''}</span></div>
+      <div class="ft" style="justify-content:flex-end">${actions(s)}</div></div>`).join('')}</div>`;
+  } else {
+    const allSel = list.length && list.every(s => S.sel.has(s.id));
+    h += `<div class="card" style="overflow:auto"><table class="tb"><thead><tr><th style="width:30px"><input type="checkbox" data-act="selAll" ${allSel ? 'checked' : ''}></th><th style="width:28px"></th><th>사이트</th><th>접속 모드</th><th>가드</th><th class="hide-m">상태</th><th class="hide-m">접근</th><th class="hide-m">방문(30일)</th><th class="hide-m">수정</th><th style="text-align:right">작업</th></tr></thead><tbody>
+      ${list.map(s => `<tr class="${S.sel.has(s.id) ? 'selr' : ''}"><td><input type="checkbox" data-act="sel" data-id="${s.id}" ${S.sel.has(s.id) ? 'checked' : ''}></td>
+        <td><button class="star ${S.favs.has(s.id) ? 'on' : ''}" data-act="fav" data-id="${s.id}">⭐</button></td>
+        <td class="nm" style="cursor:pointer" data-act="open" data-id="${s.id}"><div class="t1">${esc(s.title)}${s.doc.openFrom || s.doc.openUntil ? ' <span title="공개 기간 설정됨">📅</span>' : ''}</div><div class="t2">${esc(s.name)} · ${CATS[s.cat] || ''}${s.priv ? ' · 🔏' : ''}${s.doc.note ? ' · 📝' + esc(s.doc.note).slice(0, 30) : ''}</div></td>
+        <td>${modeSelect(s, !canEdit)}</td><td>${guardBadge(s.check)}</td><td class="hide-m">${healthBadge(s.check)}</td><td class="hide-m">${acc(s.id)}</td>
+        <td class="hide-m">${S.admin ? (s.visits || '<span class="mute">0</span>') : '<span class="mute">—</span>'}</td><td class="hide-m small muted">${s.pushed ? ago(s.pushed) : ''}</td>
+        <td style="text-align:right;white-space:nowrap">${actions(s)}</td></tr>`).join('')}
+      </tbody></table></div>`;
+  }
+  return h;
+};
+
+/* ---------- 사이트 상세(서랍) ---------- */
+function openDrawer(id) { S.drawer = { id, preview: false }; renderDrawer(); $('#drawer').classList.add('open'); $('#scrim').classList.add('on'); }
+function closeDrawer() { S.drawer = null; $('#drawer').classList.remove('open'); $('#scrim').classList.remove('on'); }
+function renderDrawer() {
+  if (!S.drawer) return;
+  const dr = $('#drawer');
+  // 입력 중이면 다시 그리지 않음
+  if (dr.contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && dr.dataset.id === S.drawer.id) return;
+  const s = siteById(S.drawer.id); const d = s.doc; const canEdit = S.admin;
+  const acc = S.admin ? siteAccess(s.id) : null;
+  const logs = S.logs.filter(l => l.site === s.id).slice(0, 12);
+  dr.dataset.id = s.id;
+  dr.innerHTML = `<div class="dh"><div style="flex:1;min-width:0"><div class="small muted">${CATS[s.cat] || ''} · ${esc(s.name)}</div><h2 style="margin:2px 0 0;font-size:19px">${esc(s.title)}</h2>
+      <div class="row" style="margin-top:8px">${guardBadge(s.check)} ${healthBadge(s.check)} <a class="small" href="${pageUrl(s.name)}" target="_blank" rel="noopener">사이트 열기 ↗</a> <a class="small" href="${s.url || `https://github.com/${OWNER}/${s.name}`}" target="_blank" rel="noopener">GitHub ↗</a></div></div>
+      <button class="btn ic" data-act="closeDrawer">✕</button></div>
+    <div class="db">
+    <section><h4>🔐 접속 모드 ${canEdit ? '' : '<span class="small mute">(관리자 로그인 필요)</span>'}</h4><div class="modes">${Object.entries(MODES).map(([k, m]) => `<button class="mcard ${s.mode === k ? 'on' : ''}" data-act="dMode" data-m="${k}" ${canEdit ? '' : 'disabled'}><div class="ic">${m.ico}</div><b>${m.label}</b><small>${m.desc}</small></button>`).join('')}</div>
+      ${s.mode !== 'public' && s.check.guard === false ? '<div class="banner warn" style="margin-top:10px">⚠️ 이 사이트에는 가드가 없어서 모드가 적용되지 않아요. 아래 [가드 설치]를 눌러 주세요.</div>' : ''}</section>
+    <section><h4>📝 기본 정보·일정</h4>
+      <div class="row"><div class="g fld"><label>표시 이름</label><input class="f" id="d_title" value="${esc(d.title || '')}" placeholder="${esc(s.title)}"></div>
+      <div class="fld"><label>카테고리</label><select class="f" id="d_cat">${Object.entries(CATS).map(([k, v]) => `<option value="${k}" ${s.cat === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div></div>
+      <div class="row"><div class="g fld"><label>공개 시작일 (선택)</label><input type="date" class="f" id="d_from" value="${esc(d.openFrom || '')}"></div><div class="g fld"><label>공개 종료일 (선택)</label><input type="date" class="f" id="d_until" value="${esc(d.openUntil || '')}"></div></div>
+      <div class="small muted" style="margin:-6px 0 10px">기간 밖에는 자동으로 ‘차단’ 화면이 보여요. 시험 기간에만 열 때 편리해요.</div>
+      <div class="fld"><label>안내 메시지 (점검·차단 화면에 표시)</label><textarea class="f" id="d_msg" rows="2" placeholder="예: 12월 9일 기말 프로젝트 이후 다시 열립니다.">${esc(d.message || '')}</textarea></div>
+      <div class="fld"><label>관리 메모 (나만 보임)</label><textarea class="f" id="d_note" rows="2" placeholder="예: KCIS 2학기 스페인어 1반용">${esc(d.note || '')}</textarea></div>
+      <button class="btn pri" data-act="dSave" ${canEdit ? '' : 'disabled'}>저장</button></section>
+    <section><h4>👥 접근 권한 ${acc ? `<span class="tag b-pri">${acc.total}명 접속 가능</span>` : ''}</h4>
+      ${!S.admin ? '<div class="small muted">관리자 로그인 후 볼 수 있어요.</div>' : `
+      ${s.mode === 'public' ? '<div class="small muted" style="margin-bottom:8px">지금은 ‘공개’ 모드라 누구나 접속해요. 아래 권한은 ‘지정 회원만’ 모드에서 적용돼요.</div>' : ''}
+      ${s.mode === 'members' ? '<div class="small muted" style="margin-bottom:8px">‘회원 전체’ 모드: 등록된 활성 회원은 모두 접속할 수 있어요.</div>' : ''}
+      <div class="fld"><label>그룹 (누르면 바로 반영)</label>${Object.keys(S.groups).length ? `<div class="chips">${Object.entries(S.groups).map(([gid, G]) => { const on = G.allSites || (G.sites || []).includes(s.id); return `<button class="chip ${on ? 'on' : ''}" data-act="dGroup" data-g="${gid}" ${G.allSites ? 'disabled title="모든 사이트 그룹"' : ''}><span class="sw" style="background:${G.color || '#6366f1'}"></span>${esc(G.name)}${G.allSites ? ' (전체)' : ''}</button>`; }).join('')}</div>` : '<span class="small muted">그룹이 없어요 — <a href="#groups">만들기</a></span>'}</div>
+      <div class="fld"><label>개별 회원 (${acc.direct.length}명)</label>
+        <div class="row"><input class="f g" id="d_add" placeholder="이메일 입력 (여러 명은 쉼표·줄바꿈)"><button class="btn" data-act="dAddUser">추가</button></div>
+        <div style="margin-top:8px;max-height:200px;overflow:auto">${acc.direct.map(e => { const u = S.users[e]; return `<div class="li"><div class="g"><div class="b ellip">${esc(u.name || e)}</div><div class="small muted ellip">${esc(e)} ${userStateTag(u)}${u.allSites ? ' <span class="tag">전체 사이트</span>' : ''}</div></div>${u.allSites ? '' : `<button class="btn sm bad" data-act="dRemoveUser" data-e="${esc(e)}">제거</button>`}</div>`; }).join('') || '<div class="small muted">개별로 추가된 회원이 없어요</div>'}</div></div>`}
+    </section>
+    <section><h4>🔗 공유</h4><div class="row"><button class="btn" data-act="copyLink" data-id="${s.id}">🔗 링크 복사</button><button class="btn" data-act="qr" data-id="${s.id}">▣ QR 코드</button><button class="btn" data-act="notice" data-id="${s.id}">💬 학생 안내문 복사</button></div></section>
+    <section><h4>🛡️ 가드 스크립트</h4><p class="small muted" style="margin:0 0 8px">가드는 사이트의 모든 HTML에 한 줄로 들어가요. 토큰이 있으면 버튼 한 번으로 설치·제거돼요.</p>
+      <div class="row"><button class="btn pri" data-act="dGuard" ${getToken() ? '' : 'disabled title="GitHub 토큰 필요"'}>🛡️ 가드 설치/갱신</button><button class="btn" data-act="dUnguard" ${getToken() ? '' : 'disabled'}>제거</button><button class="btn" data-act="dCheck">🔎 다시 점검</button><button class="btn" data-act="copySnippet" data-id="${s.id}">코드 복사</button></div>
+      <pre class="code">${esc(guardTag(s.name))}</pre></section>
+    ${S.admin ? `<section><h4>📜 최근 접속 기록</h4>${logs.length ? logs.map(l => `<div class="li"><span class="small muted" style="width:92px">${fmtDT(l.ts)}</span><div class="g ellip">${esc(l.email)} <span class="small mute">${esc(l.path)}</span></div>${resultTag(l)}</div>`).join('') : '<div class="small muted">기록 없음</div>'}</section>` : ''}
+    <section><h4>👀 미리보기</h4>${S.drawer.preview ? `<iframe class="pv" src="${pageUrl(s.name)}" loading="lazy"></iframe>` : '<button class="btn" data-act="dPreview">미리보기 열기</button>'}</section>
+    </div>`;
+}
+
+/* ---------- 회원 ---------- */
+function filteredUsers() {
+  const f = S.uf, q = f.q.trim().toLowerCase(), d0 = today();
+  let list = Object.entries(S.users).map(([email, u]) => ({ email, ...u }));
+  if (q) list = list.filter(u => (u.email + ' ' + (u.name || '') + ' ' + (u.note || '')).toLowerCase().includes(q));
+  if (f.group !== 'all') list = list.filter(u => f.group === 'none' ? !(u.groups || []).length : (u.groups || []).includes(f.group));
+  if (f.status === 'active') list = list.filter(u => userState(u) === 'active');
+  if (f.status === 'suspended') list = list.filter(u => u.status === 'suspended');
+  if (f.status === 'expired') list = list.filter(u => userState(u) === 'expired');
+  if (f.status === 'soon') list = list.filter(u => u.expiresAt && u.expiresAt >= d0 && u.expiresAt <= addDays(7));
+  if (f.status === 'never') list = list.filter(u => !u.lastSeen);
+  list.sort((a, b) => (b.lastSeen?.seconds || 0) - (a.lastSeen?.seconds || 0) || (a.name || a.email).localeCompare(b.name || b.email, 'ko'));
+  return list;
+}
+VIEWS.users = () => {
+  if (!S.admin) return needLoginCard('회원');
+  const f = S.uf, list = filteredUsers();
+  let h = `<div class="toolbar"><div class="search"><input id="uq" placeholder="이름·이메일·메모 검색" value="${esc(f.q)}" data-in="uq"></div>
+    <select class="f" data-chg="ugroup"><option value="all">모든 그룹</option><option value="none" ${f.group === 'none' ? 'selected' : ''}>그룹 없음</option>${Object.entries(S.groups).map(([id, G]) => `<option value="${id}" ${f.group === id ? 'selected' : ''}>${esc(G.name)}</option>`).join('')}</select>
+    <select class="f" data-chg="ustatus">${[['all', '모든 상태'], ['active', '✅ 활성'], ['suspended', '🚫 정지'], ['expired', '⌛ 만료'], ['soon', '⏰ 7일 내 만료'], ['never', '💤 접속 기록 없음']].map(([k, v]) => `<option value="${k}" ${f.status === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+    <span style="flex:1"></span>
+    <button class="btn" data-act="exportUsers">⬇️ CSV</button><button class="btn" data-act="importUsers">📥 일괄 등록</button><button class="btn pri" data-act="addUser">＋ 회원 추가</button></div>
+    <div class="small muted" style="margin:-4px 0 10px">${list.length}명 · 회원은 이메일로 등록하고, 학생은 그 이메일(Google 계정 또는 가입)로 로그인해요.</div>`;
+  if (!list.length) return h + `<div class="card empty"><div class="e">👤</div>${Object.keys(S.users).length ? '조건에 맞는 회원이 없어요' : '<b>첫 회원을 등록해 보세요</b><p>여러 명은 [일괄 등록]에 이메일 목록을 붙여 넣으면 한 번에 끝나요.</p>'}</div>`;
+  h += `<div class="card" style="overflow:auto"><table class="tb"><thead><tr><th>회원</th><th>그룹</th><th>사이트 권한</th><th>상태</th><th class="hide-m">만료일</th><th class="hide-m">최근 접속</th><th style="text-align:right">작업</th></tr></thead><tbody>
+    ${list.map(u => { const st = userState(u); return `<tr><td class="nm" style="cursor:pointer" data-act="editUser" data-id="${esc(u.email)}"><div class="t1">${esc(u.name || '(이름 없음)')}</div><div class="t2">${esc(u.email)}${u.note ? ' · ' + esc(u.note).slice(0, 30) : ''}</div></td>
+      <td><div class="chips">${(u.groups || []).map(groupTag).join('') || '<span class="mute small">—</span>'}</div></td>
+      <td class="small">${u.allSites ? '<span class="tag b-pri">전체 사이트</span>' : `개별 ${(u.sites || []).length}개`}</td>
+      <td>${userStateTag(u)}</td><td class="hide-m small ${st === 'expired' ? 'b' : ''}" style="${st === 'expired' ? 'color:var(--bad)' : ''}">${u.expiresAt ? esc(u.expiresAt) : '<span class="mute">무기한</span>'}</td>
+      <td class="hide-m small muted">${u.lastSeen ? ago(u.lastSeen) + (u.lastSite ? '<br>' + esc(siteTitle(u.lastSite)).slice(0, 18) : '') : '—'}</td>
+      <td style="text-align:right;white-space:nowrap"><button class="btn sm" data-act="toggleSuspend" data-id="${esc(u.email)}">${u.status === 'suspended' ? '▶ 재개' : '⏸ 정지'}</button> <button class="btn sm" data-act="editUser" data-id="${esc(u.email)}">편집</button> <button class="btn sm ic bad" data-act="delUser" data-id="${esc(u.email)}" title="삭제">🗑</button></td></tr>`; }).join('')}
+    </tbody></table></div>`;
+  return h;
+};
+function expiryField(val = '') {
+  return `<div class="fld"><label>이용 만료일</label><div class="row"><input type="date" class="f" id="m_exp" value="${esc(val)}" style="width:auto">
+    <button type="button" class="btn sm" data-setexp="${addMonths(1)}">+1개월</button><button type="button" class="btn sm" data-setexp="${addMonths(3)}">+3개월</button><button type="button" class="btn sm" data-setexp="${addMonths(6)}">+6개월</button><button type="button" class="btn sm" data-setexp="${addMonths(12)}">+1년</button><button type="button" class="btn sm" data-setexp="">무기한</button></div></div>`;
+}
+async function userModal(email) {
+  const isNew = !email; const u = isNew ? { groups: [], sites: [], status: 'active' } : S.users[email];
+  const body = `${isNew ? `<div class="fld"><label>이메일 * (여러 명이면 줄바꿈·쉼표로 구분)</label><textarea class="f" id="m_emails" rows="3" placeholder="student1@gmail.com&#10;student2@naver.com"></textarea></div>
+      <div class="fld"><label>이름 (한 명일 때)</label><input class="f" id="m_name" placeholder="홍길동"></div>`
+    : `<div class="fld"><label>이메일</label><input class="f" value="${esc(email)}" disabled></div><div class="fld"><label>이름</label><input class="f" id="m_name" value="${esc(u.name || '')}"></div>`}
+    <div class="fld"><label>그룹(반)</label>${groupChips('m_groups', u.groups || [])}</div>
+    ${expiryField(u.expiresAt || '')}
+    <div class="row fld"><label class="chip"><input type="checkbox" id="m_active" ${u.status !== 'suspended' ? 'checked' : ''}>✅ 활성 상태</label><label class="chip"><input type="checkbox" id="m_all" ${u.allSites ? 'checked' : ''}>🌐 모든 사이트 허용</label></div>
+    <div class="fld"><label>개별 사이트 권한 (그룹 권한과 합쳐져요)</label>${sitePicker('m_sites', u.sites || [])}</div>
+    <div class="fld"><label>메모</label><input class="f" id="m_note" value="${esc(u.note || '')}" placeholder="예: 학부모 연락처, 반 정보"></div>`;
+  await modal({
+    title: isNew ? '＋ 회원 추가' : '회원 편집', body, wide: true, onOpen: bindModalHelpers,
+    actions: [{ label: '취소', value: null }, {
+      label: isNew ? '등록' : '저장', cls: 'pri', run: async bg => {
+        const data = {
+          groups: pickedValues(bg, 'm_groups'), sites: pickedValues(bg, 'm_sites'), allSites: $('#m_all', bg).checked,
+          status: $('#m_active', bg).checked ? 'active' : 'suspended', expiresAt: $('#m_exp', bg).value || '', note: $('#m_note', bg).value.trim(),
+          updatedAt: fx().serverTimestamp()
+        };
+        if (isNew) {
+          const emails = parseEmails($('#m_emails', bg).value); if (!emails.length) { toast('이메일을 입력하세요', 'bad'); return false; }
+          const name = $('#m_name', bg).value.trim();
+          const { F, db } = S.fb; const batch = F.writeBatch(db);
+          emails.forEach(e => { const ex = S.users[e]; batch.set(F.doc(db, 'users', e), { ...data, email: e, name: emails.length === 1 ? name : (ex?.name || ''), ...(ex ? {} : { createdAt: F.serverTimestamp() }) }, { merge: true }); });
+          await batch.commit(); toast(`✅ ${emails.length}명 등록`, 'ok');
+        } else {
+          await fx().setDoc(dref('users', email), { ...data, name: $('#m_name', bg).value.trim() }, { merge: true }); toast('저장했어요', 'ok');
+        }
+      }
+    }]
+  });
+}
+function bindModalHelpers(bg) {
+  bg.addEventListener('click', e => { const b = e.target.closest('[data-setexp]'); if (b) { $('#m_exp', bg).value = b.dataset.setexp; } });
+  bg.addEventListener('input', e => { if (e.target.dataset.psearch) filterPicker(bg, e.target.dataset.psearch, e.target.value); });
+  bg.addEventListener('change', e => { if (e.target.matches('.picker input[type=checkbox]')) updatePickCount(bg, e.target.name); });
+}
+function filterPicker(root, name, q) {
+  q = q.trim().toLowerCase(); const pk = $(`[data-picker="${name}"]`, root);
+  $$('label.pi', pk).forEach(l => l.style.display = !q || l.dataset.pname.includes(q) ? '' : 'none');
+}
+function updatePickCount(root, name) { const el = $(`[data-pcount="${name}"]`, root); if (el) el.textContent = pickedValues(root, name).length + '개 선택'; }
+const parseEmails = txt => uniq((txt || '').split(/[\s,;]+/).map(s => s.trim().toLowerCase()).filter(s => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)));
+
+async function importModal() {
+  const body = `<p class="small muted" style="margin-top:0;line-height:1.7">엑셀·구글시트에서 복사해 붙여 넣으세요. 한 줄에 한 명:<br><code>이메일, 이름, 그룹이름</code> (이름·그룹은 생략 가능, 없는 그룹은 자동 생성)</p>
+    <textarea class="f" id="m_csv" rows="9" placeholder="minsu@gmail.com, 김민수, KCIS 스페인어 1반&#10;jiyu@naver.com, 이지유, KCIS 스페인어 1반&#10;teacher@school.kr"></textarea>
+    <div class="small muted" id="m_prev" style="margin:6px 0 12px"></div>
+    <div class="fld"><label>공통 그룹 (선택)</label>${groupChips('m_groups', [])}</div>
+    ${expiryField('')}
+    <div class="fld"><label>공통 사이트 권한 (선택)</label>${sitePicker('m_sites', [])}</div>`;
+  await modal({
+    title: '📥 회원 일괄 등록', body, wide: true,
+    onOpen: bg => { bindModalHelpers(bg); $('#m_csv', bg).addEventListener('input', () => { const rows = parseCSV($('#m_csv', bg).value); $('#m_prev', bg).textContent = rows.length ? `인식된 회원 ${rows.length}명 · 새 그룹: ${uniq(rows.map(r => r.group).filter(g => g && !groupByName(g))).join(', ') || '없음'}` : ''; }); },
+    actions: [{ label: '취소', value: null }, {
+      label: '등록하기', cls: 'pri', run: async bg => {
+        const rows = parseCSV($('#m_csv', bg).value); if (!rows.length) { toast('인식된 이메일이 없어요', 'bad'); return false; }
+        const { F, db } = S.fb; const common = pickedValues(bg, 'm_groups'), sites = pickedValues(bg, 'm_sites'), exp = $('#m_exp', bg).value || '';
+        const gmap = {};
+        for (const g of uniq(rows.map(r => r.group).filter(Boolean))) {
+          const found = groupByName(g); if (found) { gmap[g] = found; continue; }
+          const id = 'g_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+          await F.setDoc(F.doc(db, 'groups', id), { name: g, color: GCOLORS[Object.keys(S.groups).length % GCOLORS.length], sites: [], createdAt: F.serverTimestamp() }); gmap[g] = id;
+        }
+        for (let i = 0; i < rows.length; i += 400) {
+          const batch = F.writeBatch(db);
+          rows.slice(i, i + 400).forEach(r => {
+            const ex = S.users[r.email] || {};
+            batch.set(F.doc(db, 'users', r.email), {
+              email: r.email, name: r.name || ex.name || '', groups: uniq([...(ex.groups || []), ...common, ...(r.group ? [gmap[r.group]] : [])]),
+              sites: uniq([...(ex.sites || []), ...sites]), status: ex.status || 'active', expiresAt: exp || ex.expiresAt || '', allSites: !!ex.allSites,
+              ...(S.users[r.email] ? {} : { createdAt: F.serverTimestamp() }), updatedAt: F.serverTimestamp()
+            }, { merge: true });
+          });
+          await batch.commit();
+        }
+        toast(`✅ ${rows.length}명 등록 완료`, 'ok');
+      }
+    }]
+  });
+}
+const groupByName = n => (Object.entries(S.groups).find(([, G]) => (G.name || '').trim().toLowerCase() === n.trim().toLowerCase()) || [])[0];
+function parseCSV(txt) {
+  const out = [], seen = new Set();
+  (txt || '').split(/\r?\n/).forEach(line => {
+    const cells = line.split(/[,\t;]/).map(c => c.trim().replace(/^"|"$/g, ''));
+    const ei = cells.findIndex(c => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c)); if (ei < 0) return;
+    const email = cells[ei].toLowerCase(); if (seen.has(email)) return; seen.add(email);
+    const rest = cells.filter((_, i) => i !== ei);
+    out.push({ email, name: rest[0] || '', group: rest[1] || '' });
+  });
+  return out;
+}
+
+/* ---------- 그룹 ---------- */
+VIEWS.groups = () => {
+  if (!S.admin) return needLoginCard('그룹');
+  const gs = Object.entries(S.groups).sort((a, b) => (a[1].name || '').localeCompare(b[1].name || '', 'ko'));
+  let h = `<div class="toolbar"><div class="small muted g" style="flex:1">그룹(반)에 사이트를 묶어 두면, 회원을 그룹에 넣는 것만으로 여러 사이트 권한이 한 번에 생겨요.</div><button class="btn pri" data-act="addGroup">＋ 그룹 만들기</button></div>`;
+  if (!gs.length) return h + `<div class="card empty"><div class="e">🧩</div><b>첫 그룹을 만들어 보세요</b><p>예: ‘KCIS 스페인어 1반’, ‘다인에듀 DELE B1 수강생’, ‘HR 프로그램 A사’</p><button class="btn pri" data-act="addGroup">＋ 그룹 만들기</button></div>`;
+  h += `<div class="cards">${gs.map(([id, G]) => {
+    const members = Object.values(S.users).filter(u => (u.groups || []).includes(id));
+    const expired = G.expiresAt && G.expiresAt < today();
+    return `<div class="card scard" style="border-top:4px solid ${G.color || '#6366f1'}"><div class="hd"><div class="nm"><div class="t1" style="font-size:15px">${esc(G.name)}</div><div class="t2">${esc(G.note || '')}</div></div>${expired ? '<span class="tag b-bad">만료</span>' : ''}</div>
+      <div class="row small"><span class="tag">👤 ${members.length}명</span><span class="tag">🌐 ${G.allSites ? '전체 사이트' : (G.sites || []).length + '개 사이트'}</span>${G.expiresAt ? `<span class="tag">⏰ ${esc(G.expiresAt)}</span>` : ''}</div>
+      <div class="small muted" style="line-height:1.6">${G.allSites ? '모든 사이트' : (G.sites || []).slice(0, 4).map(s => esc(siteTitle(s))).join(' · ') + ((G.sites || []).length > 4 ? ` 외 ${(G.sites || []).length - 4}개` : '')}</div>
+      <div class="ft" style="justify-content:flex-end;margin-top:auto"><button class="btn sm" data-act="groupLinks" data-id="${id}">🔗 링크 모음</button><button class="btn sm" data-act="editGroup" data-id="${id}">편집</button><button class="btn sm ic bad" data-act="delGroup" data-id="${id}">🗑</button></div></div>`;
+  }).join('')}</div>`;
+  return h;
+};
+async function groupModal(id) {
+  const isNew = !id; const G = isNew ? { name: '', color: GCOLORS[Object.keys(S.groups).length % GCOLORS.length], sites: [] } : S.groups[id];
+  const members = isNew ? [] : Object.entries(S.users).filter(([, u]) => (u.groups || []).includes(id)).map(([e]) => e);
+  const body = `<div class="row"><div class="g fld"><label>그룹 이름 *</label><input class="f" id="m_gname" value="${esc(G.name)}" placeholder="예: KCIS 스페인어 1반"></div>
+      <div class="fld"><label>색상</label><div class="chips" id="m_colors">${GCOLORS.map(c => `<button type="button" class="chip ${G.color === c ? 'on' : ''}" data-color="${c}" style="padding:5px"><span class="sw" style="background:${c};width:14px;height:14px"></span></button>`).join('')}</div></div></div>
+    <div class="fld"><label>설명</label><input class="f" id="m_gnote" value="${esc(G.note || '')}" placeholder="예: 2026 2학기 화·목 수업"></div>
+    ${expiryField(G.expiresAt || '').replace('이용 만료일', '그룹 권한 만료일 (지나면 그룹 권한만 꺼져요)')}
+    <div class="fld"><label class="chip"><input type="checkbox" id="m_gall" ${G.allSites ? 'checked' : ''}>🌐 모든 사이트 허용 (선생님·조교용)</label></div>
+    <div class="fld"><label>이 그룹이 쓸 사이트</label>${sitePicker('m_sites', G.sites || [])}</div>
+    <div class="fld"><label>회원 추가 (이메일, 줄바꿈·쉼표 구분 — 미등록이면 자동 등록)</label><textarea class="f" id="m_gadd" rows="3" placeholder="student1@gmail.com, student2@gmail.com"></textarea></div>
+    ${members.length ? `<div class="fld"><label>현재 회원 ${members.length}명 (체크 해제하면 그룹에서 빠져요)</label><div class="chips">${members.map(e => `<label class="chip"><input type="checkbox" name="m_gmem" value="${esc(e)}" checked>${esc(S.users[e].name || e)}</label>`).join('')}</div></div>` : ''}`;
+  await modal({
+    title: isNew ? '＋ 그룹 만들기' : '그룹 편집', body, wide: true,
+    onOpen: bg => { bindModalHelpers(bg); bg.addEventListener('click', e => { const c = e.target.closest('[data-color]'); if (c) { $$('[data-color]', bg).forEach(x => x.classList.remove('on')); c.classList.add('on'); } }); },
+    actions: [{ label: '취소', value: null }, {
+      label: isNew ? '만들기' : '저장', cls: 'pri', run: async bg => {
+        const name = $('#m_gname', bg).value.trim(); if (!name) { toast('그룹 이름을 입력하세요', 'bad'); return false; }
+        const { F, db } = S.fb; const gid = id || ('g_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5));
+        await F.setDoc(F.doc(db, 'groups', gid), {
+          name, color: ($('[data-color].on', bg) || {}).dataset?.color || G.color, note: $('#m_gnote', bg).value.trim(), expiresAt: $('#m_exp', bg).value || '',
+          allSites: $('#m_gall', bg).checked, sites: pickedValues(bg, 'm_sites'), updatedAt: F.serverTimestamp(), ...(isNew ? { createdAt: F.serverTimestamp() } : {})
+        }, { merge: true });
+        const keep = new Set(pickedValues(bg, 'm_gmem')); const add = parseEmails($('#m_gadd', bg).value);
+        const batch = F.writeBatch(db); let n = 0;
+        members.filter(e => !keep.has(e)).forEach(e => { batch.update(F.doc(db, 'users', e), { groups: F.arrayRemove(gid) }); n++; });
+        add.forEach(e => { if (S.users[e]) batch.update(F.doc(db, 'users', e), { groups: F.arrayUnion(gid) }); else batch.set(F.doc(db, 'users', e), { email: e, name: '', groups: [gid], sites: [], status: 'active', expiresAt: '', createdAt: F.serverTimestamp() }); n++; });
+        if (n) await batch.commit();
+        toast(isNew ? '그룹을 만들었어요' : '저장했어요', 'ok');
+      }
+    }]
+  });
+}
+
+/* ---------- 접근 요청 ---------- */
+VIEWS.requests = () => {
+  if (!S.admin) return needLoginCard('접근 요청');
+  if (!S.requests.length) return `<div class="card empty"><div class="e">📨</div><b>대기 중인 요청이 없어요</b><p>권한이 없는 학생이 사이트에서 [접근 요청 보내기]를 누르면 여기에 나타나요.</p></div>`;
+  return `<div class="toolbar"><div class="small muted" style="flex:1">${S.requests.length}건 대기 · 승인하면 해당 사이트 권한이 바로 생겨요.</div><button class="btn" data-act="reqApproveAll">✅ 모두 승인</button></div>
+  <div class="grid">${S.requests.map(r => { const u = S.users[r.email]; return `<div class="card pad row"><div class="g"><div class="b">${esc(r.name || r.email)} <span class="small muted">${esc(r.email)}</span> ${u ? userStateTag(u) : '<span class="tag">미등록</span>'}</div>
+    <div class="small" style="margin-top:4px">🌐 <b>${esc(siteTitle(r.site))}</b> <span class="muted">(${esc(r.site)})</span> · ${REASONS[r.reason] || ''} · ${ago(r.ts)}</div>
+    ${r.message ? `<div class="small" style="margin-top:6px;background:var(--soft);padding:8px 10px;border-radius:8px">💬 ${esc(r.message)}</div>` : ''}</div>
+    <div class="row">${Object.keys(S.groups).length ? `<select class="f" data-chg="reqGroup" data-id="${esc(r.id)}"><option value="">그룹에 넣어 승인…</option>${Object.entries(S.groups).map(([id, G]) => `<option value="${id}">${esc(G.name)}</option>`).join('')}</select>` : ''}
+    <button class="btn pri" data-act="reqApprove" data-id="${esc(r.id)}">✅ 이 사이트 승인</button><button class="btn bad" data-act="reqDeny" data-id="${esc(r.id)}">거절</button></div></div>`; }).join('')}</div>`;
+};
+async function approveRequest(rid, groupId) {
+  if (!needAdmin()) return;
+  const r = S.requests.find(x => x.id === rid); if (!r) return;
+  const { F, db } = S.fb; const ex = S.users[r.email];
+  const patch = { status: 'active', updatedAt: F.serverTimestamp() };
+  if (groupId) patch.groups = F.arrayUnion(groupId); else patch.sites = F.arrayUnion(r.site);
+  if (r.reason === 'expired' && ex && ex.expiresAt && ex.expiresAt < today()) patch.expiresAt = addMonths(1);
+  if (ex) await F.updateDoc(F.doc(db, 'users', r.email), patch);
+  else await F.setDoc(F.doc(db, 'users', r.email), { email: r.email, name: r.name || '', groups: groupId ? [groupId] : [], sites: groupId ? [] : [r.site], status: 'active', expiresAt: '', createdAt: F.serverTimestamp() });
+  await F.deleteDoc(F.doc(db, 'requests', rid));
+  toast(`✅ ${r.name || r.email} 승인${r.reason === 'expired' ? ' (만료일 +1개월)' : ''}`, 'ok');
+}
+
+/* ---------- 접속 기록 ---------- */
+VIEWS.logs = () => {
+  if (!S.admin) return needLoginCard('접속 기록');
+  const f = S.lf, q = f.q.trim().toLowerCase();
+  let list = S.logs;
+  if (q) list = list.filter(l => (l.email + ' ' + l.path + ' ' + l.site + ' ' + siteTitle(l.site)).toLowerCase().includes(q));
+  if (f.site !== 'all') list = list.filter(l => l.site === f.site);
+  if (f.result !== 'all') list = list.filter(l => l.result === f.result);
+  const sitesInLogs = uniq(S.logs.map(l => l.site)).sort();
+  const people = uniq(list.map(l => l.email)).length;
+  return `<div class="toolbar"><div class="search"><input id="lq" placeholder="이메일·사이트·경로 검색" value="${esc(f.q)}" data-in="lq"></div>
+    <select class="f" data-chg="ldays">${[1, 7, 30, 90].map(d => `<option value="${d}" ${S.logDays === d ? 'selected' : ''}>최근 ${d}일</option>`).join('')}</select>
+    <select class="f" data-chg="lsite"><option value="all">모든 사이트</option>${sitesInLogs.map(s => `<option value="${esc(s)}" ${f.site === s ? 'selected' : ''}>${esc(siteTitle(s))}</option>`).join('')}</select>
+    <select class="f" data-chg="lresult"><option value="all">모든 결과</option>${Object.entries(RESULTS).map(([k, v]) => `<option value="${k}" ${f.result === k ? 'selected' : ''}>${v[0]}</option>`).join('')}</select>
+    <span style="flex:1"></span><button class="btn" data-act="reloadLogs">🔄</button><button class="btn" data-act="exportLogs">⬇️ CSV</button><button class="btn bad" data-act="purgeLogs">🧹 오래된 기록 정리</button></div>
+    <div class="small muted" style="margin:-4px 0 10px">${S.logsLoaded ? `${list.length}건 · 이용자 ${people}명` : '불러오는 중…'}</div>
+    ${list.length ? `<div class="card" style="overflow:auto"><table class="tb"><thead><tr><th>시각</th><th>결과</th><th>사이트</th><th>계정</th><th class="hide-m">경로</th><th class="hide-m">사유</th><th></th></tr></thead><tbody>
+      ${list.slice(0, S.logLimit).map(l => `<tr><td class="small muted" style="white-space:nowrap">${fmtDT(l.ts)}</td><td>${resultTag(l)}</td><td>${esc(siteTitle(l.site))}</td><td class="b">${esc(l.email)}</td><td class="hide-m small muted ellip" style="max-width:240px">${esc(l.path)}</td><td class="hide-m small">${REASONS[l.reason] || esc(l.reason || '')}</td>
+      <td style="text-align:right">${l.result === 'denied' && l.email !== 'anonymous' ? `<button class="btn sm" data-act="grantFromLog" data-email="${esc(l.email)}" data-site="${esc(l.site)}">허용</button>` : ''}</td></tr>`).join('')}</tbody></table>
+      ${list.length > S.logLimit ? `<div style="padding:12px;text-align:center"><button class="btn" data-act="moreLogs">더 보기 (${list.length - S.logLimit}건 남음)</button></div>` : ''}</div>` : `<div class="card empty"><div class="e">📜</div>${S.logsLoaded ? '기록이 없어요' : '불러오는 중…'}</div>`}`;
+};
+
+/* ---------- 설치·설정 ---------- */
+function rulesText(admins) {
+  const list = (admins && admins.length ? admins : ['관리자이메일@gmail.com']).map(e => `'${e}'`).join(', ');
+  return `rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function verified() { return signedIn() && request.auth.token.email_verified == true; }
+    function myEmail()  { return request.auth.token.email.lower(); }
+    function isAdmin()  { return verified() && myEmail() in [${list}]; }
+
+    // 사이트 정책: 누구나 읽기(가드가 확인), 관리자만 쓰기
+    match /sites/{site} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    // 그룹: 인증된 회원 읽기, 관리자 쓰기
+    match /groups/{g} {
+      allow read: if verified();
+      allow write: if isAdmin();
+    }
+    // 회원: 본인 문서만 읽기, 본인은 접속 시각만 갱신
+    match /users/{email} {
+      allow read: if isAdmin() || (verified() && myEmail() == email);
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (verified() && myEmail() == email
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastSeen', 'lastSite', 'visits']));
+    }
+    // 접속 기록: 누구나 형식에 맞게 추가, 관리자만 읽기·삭제
+    match /logs/{id} {
+      allow read, delete: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(['site', 'path', 'email', 'result', 'reason', 'ts', 'ua', 'ref'])
+        && request.resource.data.site is string && request.resource.data.site.size() < 100
+        && request.resource.data.path is string && request.resource.data.path.size() < 300
+        && request.resource.data.result in ['visit', 'allowed', 'denied', 'admin']
+        && (request.resource.data.email == 'anonymous' || (signedIn() && request.resource.data.email == myEmail()));
+    }
+    // 접근 요청: 인증된 본인만 생성, 관리자 처리
+    match /requests/{id} {
+      allow read, update, delete: if isAdmin();
+      allow create: if verified() && request.resource.data.email == myEmail()
+        && request.resource.data.message.size() <= 300;
+    }
+  }
+}`;
+}
+function buildConfigJs(c) {
+  return `/* Site Main Control 설정 파일 — 관리 콘솔 [설치·설정]에서 생성 (${new Date().toLocaleString('ko-KR')})
+   Firebase 웹 설정값은 공개되어도 괜찮아요(보안은 Firestore 보안 규칙이 담당). */
+window.SMC_CONFIG = ${JSON.stringify({ owner: c.owner || OWNER, adminEmails: c.adminEmails || [], firebase: c.firebase || null, options: c.options || {} }, null, 2)};
+`;
+}
+function parseFbConfig(txt) {
+  const keys = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId', 'measurementId'];
+  const o = {};
+  keys.forEach(k => { const m = txt.match(new RegExp('["\']?' + k + '["\']?\\s*:\\s*["\']([^"\']+)["\']')); if (m) o[k] = m[1]; });
+  return o.apiKey && o.projectId ? o : null;
+}
+VIEWS.setup = () => {
+  const c = S.cfg, fbOk = !!(c.firebase && c.firebase.apiKey), tok = getToken();
+  const guardN = pagesSites().filter(s => s.check.guard === true).length;
+  const pid = c.firebase && c.firebase.projectId;
+  const con = p => pid ? `https://console.firebase.google.com/project/${pid}/${p}` : 'https://console.firebase.google.com/';
+  return `<div class="grid" style="max-width:980px">
+  <div class="card pad"><h3 class="t">🧭 진행 상황</h3><div class="steps">
+    <div class="step ${location.hostname.endsWith('github.io') ? 'done' : ''}"><div class="g"><b>이 콘솔을 GitHub Pages로 열기</b><span class="small muted">저장소 Settings → Pages → Branch: <code>main</code> / <code>(root)</code> → Save. 주소: <a href="${BASE_URL}" target="_blank">${BASE_URL}</a></span></div></div>
+    <div class="step ${fbOk ? 'done' : ''}"><div class="g"><b>Firebase 연결 (무료)</b><span class="small muted">아래 ②번 카드 — 로그인·권한·기록을 저장하는 곳</span></div></div>
+    <div class="step ${c.committed ? 'done' : ''}"><div class="g"><b>설정을 config.js에 저장</b><span class="small muted">${c.committed ? '저장 완료 — 모든 사이트의 가드가 이 설정을 읽어요' : c.draft ? '지금은 이 브라우저에서만 테스트 중이에요' : '②번 카드에서 저장'}</span></div></div>
+    <div class="step ${S.admin && !S.fbErr ? 'done' : ''}"><div class="g"><b>보안 규칙 게시 & 관리자 로그인</b><span class="small muted">③번 카드의 규칙을 Firebase에 붙여 넣고 게시 → 상단 [관리자 로그인]</span></div></div>
+    <div class="step ${tok ? 'done' : ''}"><div class="g"><b>GitHub 토큰 등록 (선택, 강력 추천)</b><span class="small muted">가드 원클릭 설치·설정 자동 저장·비공개 저장소 목록에 필요</span></div></div>
+    <div class="step ${guardN ? 'done' : ''}"><div class="g"><b>사이트에 가드 설치</b><span class="small muted">${guardN ? `${guardN}개 설치됨` : '⑤번 카드 또는 [사이트]에서 선택 후 [가드 설치]'} — 설치해도 ‘공개’ 모드면 화면은 그대로예요</span></div></div>
+  </div></div>
+
+  <div class="card pad"><h3 class="t">② Firebase 연결 ${fbOk ? `<span class="tag b-ok">${esc(pid)}</span>` : ''}</h3>
+    <div class="steps">
+      <div class="step"><div class="g"><b>프로젝트 만들기</b><ol><li><a href="https://console.firebase.google.com/" target="_blank" rel="noopener">Firebase 콘솔</a> → <b>프로젝트 추가</b> → 이름(예: <code>dainedu-sites</code>) → Google 애널리틱스는 꺼도 돼요</li><li>프로젝트 개요의 <b>&lt;/&gt; (웹)</b> 아이콘 → 앱 닉네임 입력 → <b>앱 등록</b> → 보이는 <code>const firebaseConfig = {…}</code> 전체를 복사</li></ol></div></div>
+      <div class="step"><div class="g"><b>로그인 방법 켜기</b><ol><li><a href="${con('authentication/providers')}" target="_blank" rel="noopener">Authentication → 시작하기 → 로그인 방법</a>에서 <b>Google</b>(지원 이메일 선택)과 <b>이메일/비밀번호</b>를 사용 설정</li><li><a href="${con('authentication/settings')}" target="_blank" rel="noopener">설정 → 승인된 도메인</a> → <b>도메인 추가</b> → <code>${OWNER}.github.io</code></li></ol></div></div>
+      <div class="step"><div class="g"><b>데이터베이스 만들기</b><ol><li><a href="${con('firestore')}" target="_blank" rel="noopener">Firestore Database → 데이터베이스 만들기</a> → 위치 <code>asia-northeast3 (서울)</code> → <b>프로덕션 모드</b>로 시작</li></ol></div></div>
+      <div class="step"><div class="g"><b>아래에 붙여 넣고 저장</b>
+        <div class="fld" style="margin-top:8px"><label>firebaseConfig (복사한 코드 그대로 붙여 넣기)</label><textarea class="f" id="s_fb" rows="6" placeholder="const firebaseConfig = {&#10;  apiKey: &quot;...&quot;,&#10;  authDomain: &quot;...&quot;,&#10;  projectId: &quot;...&quot;, ...&#10;};">${fbOk ? esc(JSON.stringify(c.firebase, null, 2)) : ''}</textarea></div>
+        <div class="fld"><label>관리자 이메일 (이 콘솔에 로그인할 계정, 여러 개는 쉼표)</label><input class="f" id="s_admins" value="${esc((c.adminEmails || []).join(', '))}" placeholder="yourname@gmail.com"></div>
+        <div class="row fld"><div class="fld"><label>모드를 정하지 않은 사이트 기본값</label><select class="f" id="s_def">${Object.entries(MODES).map(([k, m]) => `<option value="${k}" ${c.options.defaultMode === k ? 'selected' : ''}>${m.ico} ${m.label}</option>`).join('')}</select></div>
+          <label class="chip"><input type="checkbox" id="s_log" ${c.options.logging !== false ? 'checked' : ''}>📜 접속 기록 저장</label><label class="chip"><input type="checkbox" id="s_pub" ${c.options.trackPublic !== false ? 'checked' : ''}>👁 공개 사이트 방문도 기록</label><label class="chip"><input type="checkbox" id="s_badge" ${c.options.showBadge !== false ? 'checked' : ''}>🏷 로그인 배지 표시</label></div>
+        <div class="row"><button class="btn pri" data-act="saveConfig" ${tok ? '' : 'disabled title="GitHub 토큰이 필요해요 (아래 ④)"'}>💾 config.js에 저장 (GitHub 커밋)</button><button class="btn" data-act="testConfig">🧪 이 브라우저에서 먼저 테스트</button><button class="btn" data-act="copyConfig">📋 config.js 내용 복사</button>
+          <a class="btn" href="https://github.com/${OWNER}/${SELF}/edit/main/config.js" target="_blank" rel="noopener">✏️ GitHub에서 직접 편집</a></div>
+        ${c.draft ? '<div class="banner warn" style="margin-top:10px">🧪 테스트 설정 사용 중 — 각 사이트에 적용하려면 config.js에 저장해야 해요. <button class="btn sm" data-act="clearDraft">테스트 설정 지우기</button></div>' : ''}</div></div>
+    </div></div>
+
+  <div class="card pad"><h3 class="t">③ Firestore 보안 규칙<span class="sp"></span><button class="btn sm" data-act="copyRules">📋 복사</button><a class="btn sm" href="${con('firestore/rules')}" target="_blank" rel="noopener">규칙 화면 열기 ↗</a></h3>
+    <p class="small muted" style="margin:0">Firestore → <b>규칙</b> 탭에 전체를 붙여 넣고 <b>게시</b>하세요. 관리자 이메일을 바꾸면 규칙도 다시 게시해야 해요.</p>
+    <pre class="code">${esc(rulesText(c.adminEmails))}</pre></div>
+
+  <div class="card pad"><h3 class="t">④ GitHub 토큰 ${tok ? '<span class="tag b-ok">등록됨</span>' : ''}</h3>
+    <p class="small muted" style="margin:0 0 10px;line-height:1.7">토큰은 <b>이 브라우저에만</b> 저장되고 GitHub API로만 전송돼요. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Fine-grained 토큰 만들기 ↗</a><br>
+      설정: Repository access → <b>All repositories</b> · Permissions → Repository permissions → <b>Contents: Read and write</b> (Metadata는 자동) · 만료일은 원하는 기간</p>
+    <div class="row"><input class="f g" type="password" id="s_tok" placeholder="github_pat_…" value="${tok ? '••••••••••••' : ''}"><button class="btn pri" data-act="saveToken">저장·테스트</button>${tok ? '<button class="btn bad" data-act="delToken">삭제</button>' : ''}</div></div>
+
+  <div class="card pad"><h3 class="t">⑤ 가드 스크립트</h3>
+    <p class="small muted" style="margin:0 0 6px;line-height:1.7">각 사이트 HTML의 <code>&lt;head&gt;</code> 바로 아래에 이 한 줄이 들어가요(저장소 이름만 바뀜). 같은 주소(${OWNER}.github.io)라서 <b>한 번 로그인하면 모든 사이트를 통과</b>해요.</p>
+    <pre class="code">${esc(guardTag('저장소이름'))}</pre>
+    <div class="row"><button class="btn pri" data-act="guardAll" ${tok ? '' : 'disabled title="GitHub 토큰 필요"'}>🛡️ 모든 사이트에 일괄 설치 (${pagesSites().length}개)</button><button class="btn" data-act="unguardAll" ${tok ? '' : 'disabled'}>일괄 제거</button></div>
+    <p class="small muted" style="margin:10px 0 0">💡 앞으로 새 사이트를 만들 때 Claude에게 “가드 넣어줘”라고 하거나, [사이트] → 관리 → [가드 설치]를 누르면 돼요.</p></div>
+
+  <div class="card pad"><h3 class="t">⑥ 백업·복원</h3>
+    <p class="small muted" style="margin:0 0 10px">사이트 설정·회원·그룹을 JSON 파일로 내려받아 보관하거나 복원할 수 있어요.</p>
+    <div class="row"><button class="btn" data-act="backup">⬇️ 백업 내려받기</button><label class="btn">⬆️ 복원<input type="file" accept=".json" data-chg="restore" style="display:none"></label><button class="btn" data-act="resetLocal">🧽 이 브라우저 캐시 초기화</button></div></div>
+  </div>`;
+};
+
+/* ---------- 사용 안내 ---------- */
+VIEWS.help = () => `<div class="grid" style="max-width:900px">
+  <div class="card pad"><h3 class="t">🧠 어떻게 작동하나요?</h3><div style="line-height:1.85">
+    <p>① 모든 사이트(${OWNER}.github.io/저장소)에 <b>가드 스크립트 한 줄</b>이 들어가요.<br>② 학생이 사이트를 열면 가드가 이 콘솔에서 정한 <b>접속 모드</b>를 확인해요.<br>③ ‘공개’면 바로 열리고, 그 외엔 <b>로그인 → 권한 확인</b> 후에만 내용이 보여요.<br>④ 접속·거부·요청은 모두 기록되어 대시보드에서 볼 수 있어요.</p></div></div>
+  <div class="card pad"><h3 class="t">🎛 접속 모드 5가지</h3>${Object.entries(MODES).map(([k, m]) => `<div class="li"><span style="font-size:20px">${m.ico}</span><div class="g"><b>${m.label}</b> <span class="muted small">— ${m.desc}</span></div></div>`).join('')}
+    <p class="small muted">+ 사이트별 <b>공개 기간</b>(시작·종료일)을 정하면 그 기간에만 자동으로 열려요.</p></div>
+  <div class="card pad"><h3 class="t">🏫 추천 사용법 (수업)</h3><ol style="line-height:1.9;margin:0;padding-left:20px">
+    <li>[그룹(반)]에서 ‘KCIS 스페인어 1반’ 그룹을 만들고 그 반이 쓸 사이트를 체크</li>
+    <li>[회원] → [일괄 등록]에 학생 이메일 목록을 붙여 넣고 그룹 선택, 만료일 = 학기말</li>
+    <li>[사이트]에서 해당 사이트들을 선택 → 모드 일괄 변경 → <b>🔒 지정 회원만</b></li>
+    <li>사이트 [관리] → <b>💬 학생 안내문 복사</b> → 카톡·클래스룸에 붙여 넣기 (또는 QR을 화면에 띄우기)</li>
+    <li>권한 없는 학생이 [접근 요청]을 보내면 대시보드·요청 메뉴에서 <b>승인</b> 한 번</li></ol></div>
+  <div class="card pad"><h3 class="t">⚠️ 알아 두세요</h3><ul style="line-height:1.9;margin:0;padding-left:20px">
+    <li>저장소가 <b>공개(Public)</b>면 GitHub 저장소 페이지에서 원본 파일은 누구나 볼 수 있어요. 가드는 <b>사이트 화면 접속</b>을 막는 것이고, 완전한 비밀이 필요한 자료는 저장소를 비공개로 두세요(Pages는 GitHub Pro 필요).</li>
+    <li>회원 정보·기록은 Firebase(Google)에 저장되고, 무료 한도(하루 읽기 5만·쓰기 2만 회)면 수업용으로 충분해요.</li>
+    <li>카카오톡 안에서 링크를 열면 Google 로그인이 막혀요 — 가드가 자동으로 ‘외부 브라우저로 열기’ 버튼을 보여줘요.</li>
+    <li>학생이 다른 이메일로 가입하면 권한이 없다고 나와요. 이메일 철자를 확인하거나 요청을 승인해 주세요.</li></ul></div>
+  <div class="card pad"><h3 class="t">⌨️ 단축키</h3><p class="small" style="line-height:2;margin:0"><kbd>/</kbd> 검색창 · <kbd>g</kbd> <kbd>d</kbd> 대시보드 · <kbd>g</kbd> <kbd>s</kbd> 사이트 · <kbd>g</kbd> <kbd>u</kbd> 회원 · <kbd>g</kbd> <kbd>r</kbd> 요청 · <kbd>Esc</kbd> 닫기</p></div></div>`;
+
+/* ==========================================================================
+   이벤트
+   ========================================================================== */
+const ACT = {
+  nav: el => go(el.dataset.v), menu: () => $('#side').classList.toggle('open'),
+  theme: () => { const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = t; LS.set('smc:theme', t); renderTop(); },
+  login: async () => {
+    if (!S.fb) return go('setup');
+    const { Au, auth } = S.fb;
+    const r = await modal({
+      title: '🔐 관리자 로그인', body: `<button class="btn pri" style="width:100%;justify-content:center;padding:12px" data-x="google">Google 계정으로 로그인</button>
+        <div class="small muted" style="text-align:center;margin:14px 0 8px">또는 이메일/비밀번호</div><input class="f" id="l_em" type="email" placeholder="이메일" style="margin-bottom:8px"><input class="f" id="l_pw" type="password" placeholder="비밀번호">`,
+      onOpen: bg => bg.querySelector('[data-x=google]').onclick = async () => {
+        try { const p = new Au.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' }); await Au.signInWithPopup(auth, p); bg.remove(); }
+        catch (e) { toast(e.code === 'auth/unauthorized-domain' ? `Firebase 승인된 도메인에 ${location.hostname}을(를) 추가하세요` : e.message, 'bad'); }
+      },
+      actions: [{ label: '취소', value: null }, { label: '이메일로 로그인', cls: 'pri', run: async bg => { await Au.signInWithEmailAndPassword(auth, $('#l_em', bg).value.trim(), $('#l_pw', bg).value); } }]
+    });
+    return r;
+  },
+  logout: () => S.fb && S.fb.Au.signOut(S.fb.auth),
+  // 사이트 목록
+  sel: (el, e) => { e.stopPropagation(); const id = el.dataset.id; S.sel.has(id) ? S.sel.delete(id) : S.sel.add(id); render(); },
+  selAll: () => { const l = filteredSites(); const all = l.every(s => S.sel.has(s.id)); l.forEach(s => all ? S.sel.delete(s.id) : S.sel.add(s.id)); render(); },
+  selNone: () => { S.sel.clear(); render(); },
+  fav: (el, e) => { e.stopPropagation(); const id = el.dataset.id; S.favs.has(id) ? S.favs.delete(id) : S.favs.add(id); LS.set('smc:favs', [...S.favs]); render(); },
+  favOnly: () => { S.f.favOnly = !S.f.favOnly; render(); },
+  layout: () => { S.f.layout = S.f.layout === 'table' ? 'cards' : 'table'; LS.set('smc:layout', S.f.layout); render(); },
+  reloadRepos: () => loadRepos(true),
+  checkAll: () => runChecks(pagesSites()),
+  bulkCheck: () => runChecks([...S.sel].map(id => S.repos.find(r => r.id === id)).filter(Boolean)),
+  bulkGuard: () => guardBulk([...S.sel]), bulkUnguard: () => guardBulk([...S.sel], true),
+  bulkLinks: () => copy([...S.sel].map(id => { const s = siteById(id); return `${s.title}\n${pageUrl(s.name)}`; }).join('\n\n'), `${S.sel.size}개 링크 복사`),
+  copyLink: el => copy(pageUrl(siteById(el.dataset.id).name), '링크 복사'),
+  copySnippet: el => copy(guardTag(siteById(el.dataset.id).name), '가드 코드 복사'),
+  notice: el => copy(studentNotice(siteById(el.dataset.id)), '학생 안내문 복사'),
+  qr: el => { const s = siteById(el.dataset.id); modal({ title: '▣ ' + esc(s.title), body: `<div class="qr">${qrSvg(pageUrl(s.name))}</div><p style="text-align:center;word-break:break-all" class="small">${pageUrl(s.name)}</p>`, actions: [{ label: '전체 화면', run: bg => { const q = $('.qr', bg); q.requestFullscreen ? q.requestFullscreen() : null; return false; } }, { label: '닫기', value: null, cls: 'pri' }] }); },
+  open: el => openDrawer(el.dataset.id), closeDrawer,
+  // 서랍
+  dMode: async el => { if (await saveSite(S.drawer.id, { mode: el.dataset.m })) { toast(`${MODES[el.dataset.m].ico} ${MODES[el.dataset.m].label}(으)로 변경`, 'ok'); document.activeElement.blur(); } },
+  dSave: async () => {
+    const id = S.drawer.id;
+    const ok = await saveSite(id, { title: $('#d_title').value.trim(), category: $('#d_cat').value, openFrom: $('#d_from').value, openUntil: $('#d_until').value, message: $('#d_msg').value.trim(), note: $('#d_note').value.trim() });
+    if (ok) { toast('저장했어요', 'ok'); document.activeElement.blur(); renderDrawer(); }
+  },
+  dGroup: async el => {
+    if (!needAdmin()) return; const gid = el.dataset.g, sid = S.drawer.id; const G = S.groups[gid]; const on = (G.sites || []).includes(sid);
+    await fx().updateDoc(dref('groups', gid), { sites: on ? fx().arrayRemove(sid) : fx().arrayUnion(sid) }); toast(`${G.name} ${on ? '에서 제외' : '에 추가'}`, 'ok');
+  },
+  dAddUser: async () => {
+    if (!needAdmin()) return; const emails = parseEmails($('#d_add').value); if (!emails.length) return toast('이메일을 입력하세요', 'bad');
+    const { F, db } = S.fb; const sid = S.drawer.id; const batch = F.writeBatch(db);
+    emails.forEach(e => { if (S.users[e]) batch.update(F.doc(db, 'users', e), { sites: F.arrayUnion(sid) }); else batch.set(F.doc(db, 'users', e), { email: e, name: '', groups: [], sites: [sid], status: 'active', expiresAt: '', createdAt: F.serverTimestamp() }); });
+    await batch.commit(); $('#d_add').value = ''; document.activeElement.blur(); toast(`✅ ${emails.length}명 추가`, 'ok');
+  },
+  dRemoveUser: async el => { if (!needAdmin()) return; await fx().updateDoc(dref('users', el.dataset.e), { sites: fx().arrayRemove(S.drawer.id) }); toast('제거했어요', 'ok'); },
+  dGuard: () => guardBulk([S.drawer.id]), dUnguard: () => guardBulk([S.drawer.id], true),
+  dCheck: async () => { const r = S.repos.find(x => x.id === S.drawer.id); if (r) { await checkOne(r); LS.set('smc:checks', S.checks); render(); toast('점검 완료', 'ok'); } },
+  dPreview: () => { S.drawer.preview = true; renderDrawer(); },
+  // 회원
+  addUser: () => userModal(), editUser: el => userModal(el.dataset.id), importUsers: () => importModal(),
+  toggleSuspend: async el => { if (!needAdmin()) return; const u = S.users[el.dataset.id]; const s = u.status === 'suspended' ? 'active' : 'suspended'; await fx().updateDoc(dref('users', el.dataset.id), { status: s }); toast(s === 'active' ? '▶ 이용 재개' : '⏸ 이용 정지', 'ok'); },
+  delUser: async el => { if (!needAdmin()) return; if (await confirmBox(`<b>${esc(el.dataset.id)}</b> 회원을 삭제할까요?<br><span class="small muted">로그인 계정 자체는 남지만 모든 권한이 사라져요.</span>`, '삭제', 'bad')) { await fx().deleteDoc(dref('users', el.dataset.id)); toast('삭제했어요', 'ok'); } },
+  extend: async el => { if (!needAdmin()) return; const u = S.users[el.dataset.id]; const base = u.expiresAt && u.expiresAt > today() ? u.expiresAt : today(); const d = new Date(base); d.setMonth(d.getMonth() + (+el.dataset.m || 1)); await fx().updateDoc(dref('users', el.dataset.id), { expiresAt: d.toLocaleDateString('sv-SE') }); toast('만료일 연장', 'ok'); },
+  exportUsers: () => { const rows = [['email', 'name', 'groups', 'sites', 'allSites', 'status', 'expiresAt', 'lastSeen', 'note']]; Object.entries(S.users).forEach(([e, u]) => rows.push([e, u.name || '', (u.groups || []).map(g => S.groups[g]?.name || g).join('|'), (u.sites || []).join('|'), u.allSites ? 'Y' : '', u.status || 'active', u.expiresAt || '', u.lastSeen ? tsDate(u.lastSeen).toISOString() : '', u.note || ''])); download(`members_${today()}.csv`, toCSV(rows), 'text/csv'); },
+  grantFromLog: async el => { if (!needAdmin()) return; const e = el.dataset.email, sid = el.dataset.site, { F, db } = S.fb; if (S.users[e]) await F.updateDoc(F.doc(db, 'users', e), { sites: F.arrayUnion(sid), status: 'active' }); else await F.setDoc(F.doc(db, 'users', e), { email: e, name: '', groups: [], sites: [sid], status: 'active', expiresAt: '', createdAt: F.serverTimestamp() }); toast(`✅ ${e} → ${siteTitle(sid)} 허용`, 'ok'); },
+  // 그룹
+  addGroup: () => groupModal(), editGroup: el => groupModal(el.dataset.id),
+  delGroup: async el => { if (!needAdmin()) return; const G = S.groups[el.dataset.id]; if (!(await confirmBox(`<b>${esc(G.name)}</b> 그룹을 삭제할까요?<br><span class="small muted">회원은 남고, 그룹을 통한 권한만 사라져요.</span>`, '삭제', 'bad'))) return; const { F, db } = S.fb; const batch = F.writeBatch(db); Object.entries(S.users).filter(([, u]) => (u.groups || []).includes(el.dataset.id)).forEach(([e]) => batch.update(F.doc(db, 'users', e), { groups: F.arrayRemove(el.dataset.id) })); batch.delete(F.doc(db, 'groups', el.dataset.id)); await batch.commit(); toast('삭제했어요', 'ok'); },
+  groupLinks: el => { const G = S.groups[el.dataset.id]; const ids = G.allSites ? pagesSites().map(s => s.id) : (G.sites || []); copy(`📚 ${G.name} 학습 사이트\n\n` + ids.map(id => { const s = siteById(id); return `• ${s.title}\n  ${pageUrl(s.name)}`; }).join('\n') + '\n\n처음 열면 선생님께 알려드린 이메일로 로그인하세요.', '링크 모음 복사'); },
+  // 요청
+  reqApprove: el => approveRequest(el.dataset.id),
+  reqDeny: async el => { if (!needAdmin()) return; await fx().deleteDoc(dref('requests', el.dataset.id)); toast('거절했어요'); },
+  reqApproveAll: async () => { if (!(await confirmBox(`${S.requests.length}건을 모두 승인할까요?`, '모두 승인'))) return; for (const r of [...S.requests]) await approveRequest(r.id); },
+  // 기록
+  reloadLogs: () => loadLogs(), moreLogs: () => { S.logLimit += 500; render(); },
+  exportLogs: () => { const rows = [['time', 'result', 'site', 'email', 'path', 'reason', 'ua']]; S.logs.forEach(l => rows.push([tsDate(l.ts)?.toISOString() || '', l.result, l.site, l.email, l.path, l.reason || '', l.ua || ''])); download(`access_logs_${today()}.csv`, toCSV(rows), 'text/csv'); },
+  purgeLogs: async () => {
+    if (!needAdmin()) return;
+    const days = await modal({ title: '🧹 오래된 기록 정리', body: '<p style="margin-top:0">며칠보다 오래된 기록을 삭제할까요? (무료 한도 절약)</p><select class="f" id="pd"><option value="30">30일</option><option value="90" selected>90일</option><option value="180">180일</option></select>', actions: [{ label: '취소', value: null }, { label: '삭제', cls: 'bad', run: bg => +$('#pd', bg).value }] });
+    if (!days) return; const { F, db } = S.fb; let total = 0;
+    while (true) {
+      const s = await F.getDocs(F.query(F.collection(db, 'logs'), F.where('ts', '<', F.Timestamp.fromDate(new Date(Date.now() - days * 864e5))), F.limit(400)));
+      if (s.empty) break; const b = F.writeBatch(db); s.docs.forEach(d => b.delete(d.ref)); await b.commit(); total += s.size;
+    }
+    toast(`🧹 ${total}건 삭제`, 'ok'); loadLogs();
+  },
+  // 설정
+  testConfig: () => { const c = readSetupForm(); if (!c) return; LS.set('smc:cfgDraft', c); toast('🧪 테스트 설정 저장 — 새로고침합니다', 'ok'); setTimeout(() => location.reload(), 700); },
+  clearDraft: () => { LS.del('smc:cfgDraft'); location.reload(); },
+  copyConfig: () => { const c = readSetupForm(true) || S.cfg; copy(buildConfigJs(c), 'config.js 내용 복사 — GitHub에서 붙여 넣으세요'); },
+  saveConfig: async () => {
+    const c = readSetupForm(); if (!c) return;
+    try { await putFile(SELF, 'config.js', buildConfigJs(c), 'Site Main Control 설정 저장'); LS.del('smc:cfgDraft'); await modal({ title: '✅ 저장 완료', body: '<p style="line-height:1.7;margin:0">config.js를 GitHub에 저장했어요. <b>1~2분 뒤</b> 모든 사이트에 반영돼요.<br>이제 ③ 보안 규칙을 Firebase에 게시하고 관리자 로그인을 해 주세요.</p>', actions: [{ label: '확인', cls: 'pri', value: 1 }] }); S.cfg = Object.assign(loadCfg(), c, { committed: true, draft: false }); LS.set('smc:cfgDraft', c); location.reload(); }
+    catch (e) { toast(e.message, 'bad'); }
+  },
+  copyRules: () => copy(rulesText(S.cfg.adminEmails), '보안 규칙 복사'),
+  saveToken: async () => {
+    const v = $('#s_tok').value.trim(); if (!v || v.startsWith('•')) return toast('토큰을 붙여 넣으세요', 'bad');
+    LS.set('smc:ghToken', v);
+    try { const me = await gh('/user'); await gh(`/repos/${OWNER}/${SELF}`); toast(`✅ ${me.login} 토큰 확인`, 'ok'); loadRepos(true); render(); }
+    catch (e) { LS.del('smc:ghToken'); toast('토큰 확인 실패: ' + e.message, 'bad'); }
+  },
+  delToken: () => { LS.del('smc:ghToken'); toast('토큰 삭제'); render(); },
+  guardAll: () => guardBulk(pagesSites().map(s => s.id)), unguardAll: () => guardBulk(pagesSites().map(s => s.id), true),
+  backup: () => download(`site_main_control_backup_${today()}.json`, JSON.stringify({ exportedAt: new Date().toISOString(), sites: S.sites, users: S.users, groups: S.groups }, (k, v) => (v && typeof v === 'object' && 'seconds' in v && 'nanoseconds' in v) ? new Date(v.seconds * 1000).toISOString() : v, 2), 'application/json'),
+  resetLocal: () => { ['smc:repos', 'smc:checks'].forEach(LS.del); location.reload(); },
+  pickAll: el => { const pk = el.closest('.picker'); $$('label.pi', pk).filter(l => l.style.display !== 'none').forEach(l => l.querySelector('input').checked = true); updatePickCount(el.closest('.modal-bg') || document, el.dataset.n); },
+  pickNone: el => { const pk = el.closest('.picker'); $$('input', pk).forEach(i => i.checked = false); updatePickCount(el.closest('.modal-bg') || document, el.dataset.n); },
+  pickCat: el => { const pk = el.closest('.picker'); const boxes = $$(`label.pi[data-pc="${el.dataset.c}"] input`, pk); const all = boxes.every(b => b.checked); boxes.forEach(b => b.checked = !all); updatePickCount(el.closest('.modal-bg') || document, el.dataset.n); }
+};
+function readSetupForm(silent) {
+  const fb = parseFbConfig($('#s_fb').value || '');
+  if (!fb) { if (!silent) toast('firebaseConfig를 인식하지 못했어요. Firebase에서 복사한 코드를 그대로 붙여 넣으세요', 'bad'); return null; }
+  const admins = parseEmails($('#s_admins').value);
+  if (!admins.length) { if (!silent) toast('관리자 이메일을 입력하세요', 'bad'); return null; }
+  return { owner: OWNER, firebase: fb, adminEmails: admins, options: { defaultMode: $('#s_def').value, logging: $('#s_log').checked, trackPublic: $('#s_pub').checked, showBadge: $('#s_badge').checked } };
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el || el.disabled) return;
+  if (el.closest('.modal-bg') && !['pickAll', 'pickNone', 'pickCat'].includes(el.dataset.act)) return;
+  const fn = ACT[el.dataset.act]; if (fn) { e.preventDefault(); Promise.resolve(fn(el, e)).catch(err => toast(err.message || String(err), 'bad')); }
+});
+$('#scrim').addEventListener('click', closeDrawer);
+const CHG = {
+  mode: async el => { await setMode([el.dataset.id], el.value); },
+  bulkMode: async el => { if (!el.value) return; const ok = await confirmBox(`선택한 ${S.sel.size}개 사이트를 <b>${MODES[el.value].ico} ${MODES[el.value].label}</b>(으)로 바꿀까요?`); if (ok) { await setMode([...S.sel], el.value); S.sel.clear(); } el.value = ''; render(); },
+  bulkGroup: async el => { if (!el.value || !needAdmin()) return; await fx().updateDoc(dref('groups', el.value), { sites: fx().arrayUnion(...S.sel) }); toast(`${S.groups[el.value].name}에 ${S.sel.size}개 사이트 추가`, 'ok'); el.value = ''; },
+  fcat: el => { S.f.cat = el.value; render(); }, fmode: el => { S.f.mode = el.value; render(); }, fguard: el => { S.f.guard = el.value; render(); }, fsort: el => { S.f.sort = el.value; render(); }, fall: el => { S.f.all = el.checked; render(); },
+  ugroup: el => { S.uf.group = el.value; render(); }, ustatus: el => { S.uf.status = el.value; render(); },
+  ldays: el => loadLogs(+el.value), lsite: el => { S.lf.site = el.value; render(); }, lresult: el => { S.lf.result = el.value; render(); },
+  reqGroup: el => { if (el.value) approveRequest(el.dataset.id, el.value); },
+  restore: async el => {
+    const file = el.files[0]; if (!file || !needAdmin()) return;
+    try {
+      const data = JSON.parse(await file.text()); if (!(await confirmBox(`백업을 복원할까요? 사이트 ${Object.keys(data.sites || {}).length} · 회원 ${Object.keys(data.users || {}).length} · 그룹 ${Object.keys(data.groups || {}).length}<br><span class="small muted">같은 항목은 덮어써요.</span>`, '복원'))) return;
+      const { F, db } = S.fb; const ops = [];
+      ['sites', 'users', 'groups'].forEach(col => Object.entries(data[col] || {}).forEach(([id, v]) => { const c = { ...v }; ['createdAt', 'updatedAt', 'lastSeen'].forEach(k => { if (typeof c[k] === 'string') c[k] = F.Timestamp.fromDate(new Date(c[k])); }); ops.push([col, id, c]); }));
+      for (let i = 0; i < ops.length; i += 400) { const b = F.writeBatch(db); ops.slice(i, i + 400).forEach(([col, id, v]) => b.set(F.doc(db, col, id), v, { merge: true })); await b.commit(); }
+      toast(`✅ ${ops.length}개 항목 복원`, 'ok');
+    } catch (e) { toast('복원 실패: ' + e.message, 'bad'); }
+    el.value = '';
+  }
+};
+document.addEventListener('change', e => {
+  const el = e.target.closest('[data-chg]'); if (!el || el.closest('.modal-bg')) return;
+  const fn = CHG[el.dataset.chg]; if (fn) Promise.resolve(fn(el, e)).catch(err => toast(err.message || String(err), 'bad'));
+});
+let inT;
+document.addEventListener('input', e => {
+  const el = e.target; const k = el.dataset && el.dataset.in; if (!k) return;
+  clearTimeout(inT); inT = setTimeout(() => { if (k === 'sq') S.f.q = el.value; if (k === 'uq') S.uf.q = el.value; if (k === 'lq') S.lf.q = el.value; render(); }, 120);
+});
+let gKey = 0;
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if ($('#modalRoot').children.length) return; closeDrawer(); return; }
+  if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === '/') { const s = $('#sq,#uq,#lq'); if (s) { e.preventDefault(); s.focus(); } else { go('sites'); setTimeout(() => $('#sq') && $('#sq').focus(), 80); e.preventDefault(); } return; }
+  if (e.key === 'g') { gKey = Date.now(); return; }
+  if (Date.now() - gKey < 800) { const m = { d: 'dashboard', s: 'sites', u: 'users', r: 'requests', l: 'logs', p: 'groups' }[e.key]; if (m) go(m); gKey = 0; }
+});
+
+/* ---------------- 시작 ---------------- */
+renderNav(); renderTop(); render();
+loadRepos().then(() => {
+  const stale = pagesSites().filter(s => !S.checks[s.id] || Date.now() - (S.checks[s.id].t || 0) > 6 * 3600e3);
+  if (stale.length && stale.length <= 200) runChecks(stale.map(s => S.repos.find(r => r.id === s.id)));
+});
+initFirebase();
+</script>
+</body>
+</html>

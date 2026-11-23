@@ -1,0 +1,44 @@
+// Site Main Control — Firestore 보안 규칙
+// '관리자이메일@gmail.com'을 실제 관리자 이메일로 바꾸세요 (콘솔 [설치·설정] ③에서 자동 생성된 규칙을 복사하면 편해요)
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function verified() { return signedIn() && request.auth.token.email_verified == true; }
+    function myEmail()  { return request.auth.token.email.lower(); }
+    function isAdmin()  { return verified() && myEmail() in ['관리자이메일@gmail.com']; }
+
+    // 사이트 정책: 누구나 읽기(가드가 확인), 관리자만 쓰기
+    match /sites/{site} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    // 그룹: 인증된 회원 읽기, 관리자 쓰기
+    match /groups/{g} {
+      allow read: if verified();
+      allow write: if isAdmin();
+    }
+    // 회원: 본인 문서만 읽기, 본인은 접속 시각만 갱신
+    match /users/{email} {
+      allow read: if isAdmin() || (verified() && myEmail() == email);
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (verified() && myEmail() == email
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastSeen', 'lastSite', 'visits']));
+    }
+    // 접속 기록: 누구나 형식에 맞게 추가, 관리자만 읽기·삭제
+    match /logs/{id} {
+      allow read, delete: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(['site', 'path', 'email', 'result', 'reason', 'ts', 'ua', 'ref'])
+        && request.resource.data.site is string && request.resource.data.site.size() < 100
+        && request.resource.data.path is string && request.resource.data.path.size() < 300
+        && request.resource.data.result in ['visit', 'allowed', 'denied', 'admin']
+        && (request.resource.data.email == 'anonymous' || (signedIn() && request.resource.data.email == myEmail()));
+    }
+    // 접근 요청: 인증된 본인만 생성, 관리자 처리
+    match /requests/{id} {
+      allow read, update, delete: if isAdmin();
+      allow create: if verified() && request.resource.data.email == myEmail()
+        && request.resource.data.message.size() <= 300;
+    }
+  }
+}
