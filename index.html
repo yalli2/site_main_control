@@ -357,7 +357,7 @@ async function initFirebase() {
       import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-auth.js`),
       import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-firestore.js`)
     ]);
-    const app = A.initializeApp(c.firebase, 'smc-admin');
+    const app = (A.getApps().find(a => a.name === 'smc') || A.initializeApp(c.firebase, 'smc'));
     const auth = Au.getAuth(app), db = F.getFirestore(app);
     S.fb = { A, Au, F, app, auth, db };
     F.onSnapshot(F.collection(db, 'sites'), snap => { S.sites = {}; snap.forEach(d => S.sites[d.id] = d.data()); render(); },
