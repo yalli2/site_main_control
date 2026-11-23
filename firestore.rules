@@ -1,12 +1,12 @@
 // Site Main Control — Firestore 보안 규칙
-// '관리자이메일@gmail.com'을 실제 관리자 이메일로 바꾸세요 (콘솔 [설치·설정] ③에서 자동 생성된 규칙을 복사하면 편해요)
+// 현재 게시된 규칙 (관리자: buyeon.hwang@gmail.com)
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
     function verified() { return signedIn() && request.auth.token.email_verified == true; }
     function myEmail()  { return request.auth.token.email.lower(); }
-    function isAdmin()  { return verified() && myEmail() in ['관리자이메일@gmail.com']; }
+    function isAdmin()  { return verified() && myEmail() in ['buyeon.hwang@gmail.com']; }
 
     // 사이트 정책: 누구나 읽기(가드가 확인), 관리자만 쓰기
     match /sites/{site} {
