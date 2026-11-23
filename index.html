@@ -546,12 +546,13 @@ function renderTop() {
 let rq = 0;
 function render() {
   if (rq) return;
-  rq = requestAnimationFrame(() => {
+  rq = setTimeout(() => {
     rq = 0;
     const a = document.activeElement; const id = a && a.id && $('#main').contains(a) ? a.id : null;
     let ss, se; try { ss = a.selectionStart; se = a.selectionEnd; } catch {}
     const fn = VIEWS[S.view] || VIEWS.dashboard;
-    $('#main').innerHTML = fn();
+    try { $('#main').innerHTML = fn(); }
+    catch (err) { console.error(err); $('#main').innerHTML = `<div class="card pad empty"><div class="e">⚠️</div><b>화면을 그리는 중 오류가 났어요</b><p class="small muted">${esc(err.message)}</p><button class="btn" onclick="location.reload()">새로고침</button></div>`; }
     if (id) { const el = document.getElementById(id); if (el) { el.focus(); try { el.setSelectionRange(ss, se); } catch {} } }
     if (S.drawer) renderDrawer();
     renderNav();
