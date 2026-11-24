@@ -203,6 +203,7 @@
       sp.src = BASE + 'speak.js?v=' + Math.floor(Date.now() / 600000); sp.async = true;
       sp.setAttribute('data-site', rawSite);
       if (me && me.getAttribute('data-speak-lang')) sp.setAttribute('data-lang', me.getAttribute('data-speak-lang'));
+      if (me && me.getAttribute('data-speak-inline')) sp.setAttribute('data-inline', me.getAttribute('data-speak-inline'));
       (document.head || ROOT).appendChild(sp);
     } catch (e) {}
   }
