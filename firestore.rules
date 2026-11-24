@@ -40,5 +40,33 @@ service cloud.firestore {
       allow create: if verified() && request.resource.data.email == myEmail()
         && request.resource.data.message.size() <= 300;
     }
+    // 🎙 말하기 연습(speak.js): 점수 — 본인만 쓰기(한 번에 +300 XP 이내), 로그인 회원은 순위표로 읽기
+    function speakName() { return request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 40; }
+    function speakOk(prev) { return speakName() && request.resource.data.xp is int
+      && request.resource.data.xp >= prev && request.resource.data.xp - prev <= 300; }
+    match /speak_users/{uid} {
+      allow read: if signedIn();
+      allow create: if verified() && request.auth.uid == uid && speakOk(0);
+      allow update: if verified() && request.auth.uid == uid && speakOk(resource.data.get('xp', 0));
+      allow delete: if isAdmin() || (signedIn() && request.auth.uid == uid);
+    }
+    // 🎙 말하기 반: 인증 회원 누구나 만들기, 만든 사람·관리자만 수정·삭제
+    match /speak_classes/{code} {
+      allow read: if signedIn();
+      allow create: if verified() && code.matches('^[A-Z0-9]{6}$')
+        && request.resource.data.owner == request.auth.uid && speakName();
+      allow update: if verified() && (resource.data.owner == request.auth.uid || isAdmin())
+        && request.resource.data.owner == resource.data.owner && speakName();
+      allow delete: if verified() && (resource.data.owner == request.auth.uid || isAdmin());
+      match /members/{uid} {
+        allow read: if signedIn();
+        allow create: if verified() && request.auth.uid == uid
+          && exists(/databases/$(database)/documents/speak_classes/$(code))
+          && request.resource.data.xp == 0 && speakName();
+        allow update: if verified() && request.auth.uid == uid && speakOk(resource.data.get('xp', 0));
+        allow delete: if verified() && (request.auth.uid == uid || isAdmin()
+          || get(/databases/$(database)/documents/speak_classes/$(code)).data.owner == request.auth.uid);
+      }
+    }
   }
 }

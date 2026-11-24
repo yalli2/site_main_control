@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>🎙 다인에듀 말하기 리그 · 반 관리</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎙</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Pretendard,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;background:#f6f1e8;color:#1f2433;font-size:15px;line-height:1.55}
+header{background:linear-gradient(135deg,#1f2433,#4a2d5e);color:#fff;padding:22px 20px 0}
+.wrap{max-width:1040px;margin:0 auto}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:24px;font-weight:900;flex:1}
+h1 small{display:block;font-size:13px;font-weight:600;opacity:.75;margin-top:2px}
+.who{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+nav{display:flex;gap:4px;margin-top:18px}
+nav button{border:0;background:transparent;color:rgba(255,255,255,.7);font:800 14px inherit;padding:11px 16px;border-radius:14px 14px 0 0;cursor:pointer}
+nav button.on{background:#f6f1e8;color:#1f2433}
+main{padding:20px}
+.btn{border:1px solid #e4ddd0;background:#fff;color:#1f2433;border-radius:11px;padding:9px 13px;font:700 13px inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:#b9ae9a}.btn.p{background:#1f2433;color:#fff;border-color:#1f2433}.btn.a{background:#e0386b;color:#fff;border-color:#e0386b}.btn.s{padding:6px 9px;font-size:12px}.btn.g{background:transparent;border-color:transparent}
+.btn.w{background:rgba(255,255,255,.14);color:#fff;border-color:transparent}
+.card{background:#fff;border:1px solid #ece3d3;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 2px 0 #eee4d2}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+.seg{display:inline-flex;background:#ece4d5;border-radius:12px;padding:3px;gap:3px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:7px 12px;font:800 13px inherit;color:#6b6457;cursor:pointer}
+.seg button.on{background:#fff;color:#1f2433;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+select,input{border:1px solid #e4ddd0;border-radius:11px;padding:9px 11px;font:600 14px inherit;background:#fff;color:#1f2433}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;color:#8a8170;font-weight:800;padding:8px 10px;border-bottom:2px solid #efe7d8;white-space:nowrap;cursor:pointer;user-select:none}
+td{padding:9px 10px;border-bottom:1px solid #f3ecdf;vertical-align:middle}
+tr.me td{background:#fff4f6}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.rk{font-weight:900;width:44px;text-align:center}
+.tier{display:inline-block;font-weight:900;font-size:11.5px;border-radius:999px;padding:2px 9px;color:#fff}
+.muted{color:#8a8170;font-size:13px}
+.code{font:800 14px ui-monospace,monospace;background:#f1ebe0;border-radius:8px;padding:4px 8px}
+.cls{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.cl{background:#fff;border:1px solid #ece3d3;border-radius:16px;padding:14px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.cl:hover{border-color:#e0386b}.cl b{display:block;font-size:16px}
+.msg{margin-top:10px;font-weight:700;color:#b3123a;background:#fff0f2;border-radius:10px;padding:9px 12px;font-size:13px}
+.msg.ok{color:#0b6b3a;background:#e9f9f0}
+.login{max-width:420px;margin:30px auto;text-align:center}
+.login input{width:100%;margin-top:8px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.steps div{background:#fff;border:1px solid #ece3d3;border-radius:16px;padding:14px}
+.steps b{display:block;margin-bottom:4px}
+.scroll{overflow:auto}
+@media (max-width:640px){.hide-m{display:none}h1{font-size:20px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><h1>🎙 다인에듀 말하기 리그<small>모든 어학 사이트의 말하기 연습 점수 · 반 순위 · 전체 리그</small></h1><div class="who" id="who"></div></div>
+  <nav id="nav"></nav>
+</div></header>
+<main><div class="wrap" id="app"><div class="muted">불러오는 중…</div></div></main>
+<script src="config.js"></script>
+<script type="module">
+const FBV = '10.12.2';
+const [A, Au, F] = await Promise.all([
+  import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-app.js`),
+  import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-auth.js`),
+  import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-firestore.js`)
+]);
+const cfg = window.SMC_CONFIG || {};
+const app = A.getApps().find(a => a.name === 'smc') || A.initializeApp(cfg.firebase, 'smc');
+const auth = Au.getAuth(app), db = F.getFirestore(app);
+const admins = (cfg.adminEmails || []).map(e => e.toLowerCase());
+const LANGS = { es: ['🇪🇸', '스페인어'], en: ['🇺🇸', '영어'], fr: ['🇫🇷', '프랑스어'], it: ['🇮🇹', '이탈리아어'], pt: ['🇧🇷', '포르투갈어'], ca: ['🏴', '카탈루냐어'], la: ['🏛️', '라틴어'], zh: ['🇨🇳', '중국어'], ja: ['🇯🇵', '일본어'], ar: ['🇸🇦', '아랍어'], ru: ['🇷🇺', '러시아어'], all: ['🌐', '모든 언어'] };
+const TIERS = [[0, '브론즈', '#b4743c'], [50, '실버', '#8a94a6'], [150, '골드', '#d4a017'], [400, '플래티넘', '#2a9d8f'], [1000, '다이아', '#5b6cff']];
+const tierOf = x => TIERS.reduce((t, r) => (x || 0) >= r[0] ? r : t, TIERS[0]);
+const lvlOf = xp => Math.floor(Math.sqrt((xp || 0) / 20)) + 1;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pad = n => (n < 10 ? '0' : '') + n;
+function weekKey(d = new Date()) { const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return 'w' + t.getUTCFullYear() + '_' + pad(Math.ceil(((t - y0) / 86400000 + 1) / 7)); }
+function rid(n) { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; return Array.from(crypto.getRandomValues(new Uint8Array(n)), b => a[b % a.length]).join(''); }
+const S = { tab: 'league', user: null, admin: false, mode: 'week', lang: 'all', rows: null, classes: null, sel: null, members: null, sort: 'wk', msg: '', authTab: 'in' };
+const W = weekKey();
+const $ = s => document.querySelector(s);
+
+Au.onAuthStateChanged(auth, u => {
+  S.user = u && (u.emailVerified || u.providerData.some(p => p.providerId === 'google.com')) ? u : null;
+  S.unverified = u && !S.user ? u : null;
+  S.admin = !!(S.user && admins.includes((S.user.email || '').toLowerCase()));
+  S.rows = null; S.classes = null; S.members = null;
+  const h = new URLSearchParams(location.hash.slice(1)); if (h.get('class')) { S.tab = 'class'; S.sel = h.get('class').toUpperCase(); }
+  render();
+});
+
+function render() {
+  $('#who').innerHTML = S.user ? `${esc(S.user.email)}${S.admin ? ' · ⚙ 관리자' : ''} <button class="btn s w" data-a="logout">로그아웃</button>` : '';
+  $('#nav').innerHTML = [['league', '🏆 전체 리그'], ['class', '👥 반 관리'], ['help', '📘 사용 안내']].map(t => `<button class="${S.tab === t[0] ? 'on' : ''}" data-a="tab" data-v="${t[0]}">${t[1]}</button>`).join('');
+  const app = $('#app');
+  if (S.tab === 'help') { app.innerHTML = vHelp(); return; }
+  if (!S.user) { app.innerHTML = vLogin(); return; }
+  app.innerHTML = S.tab === 'league' ? vLeague() : vClass();
+  if (S.tab === 'league' && !S.rows) loadLeague();
+  if (S.tab === 'class' && !S.sel && !S.classes) loadClasses();
+  if (S.tab === 'class' && S.sel && !S.members) loadMembers();
+}
+function vLogin() {
+  if (S.unverified) return `<div class="card login"><b>이메일 인증이 필요해요</b><p class="muted">${esc(S.unverified.email)}로 보낸 인증 메일의 링크를 누른 뒤 아래 버튼을 눌러 주세요.</p><div class="row" style="justify-content:center"><button class="btn p" data-a="verified">인증 완료했어요</button><button class="btn" data-a="logout">로그아웃</button></div></div>`;
+  return `<div class="card login"><div style="font-size:40px">🎙</div><h2 style="margin:6px 0">로그인</h2><p class="muted">다인에듀 학습 사이트와 같은 계정을 사용해요.</p>
+    <button class="btn p" style="width:100%;justify-content:center" data-a="google">G&nbsp; Google 계정으로 로그인</button>
+    <div class="seg" style="margin-top:14px"><button class="${S.authTab === 'in' ? 'on' : ''}" data-a="authTab" data-v="in">이메일 로그인</button><button class="${S.authTab === 'up' ? 'on' : ''}" data-a="authTab" data-v="up">가입</button></div>
+    <input type="email" id="em" placeholder="이메일"><input type="password" id="pw" placeholder="비밀번호 (6자 이상)">
+    <button class="btn a" style="width:100%;justify-content:center;margin-top:10px" data-a="email">${S.authTab === 'up' ? '가입하기' : '로그인'}</button>${S.msg ? `<div class="msg">${esc(S.msg)}</div>` : ''}</div>`;
+}
+function vLeague() {
+  const field = S.mode === 'week' ? '이번 주' : '누적';
+  let h = `<div class="card"><div class="row"><div class="seg"><button class="${S.mode === 'week' ? 'on' : ''}" data-a="mode" data-v="week">이번 주 (${W.replace('w', '').replace('_', '년 ')}주)</button><button class="${S.mode === 'all' ? 'on' : ''}" data-a="mode" data-v="all">전체 누적</button></div>
+    <select id="lang">${Object.entries(LANGS).map(([k, v]) => `<option value="${k}" ${S.lang === k ? 'selected' : ''}>${v[0]} ${k === 'all' ? '모든 언어 합계' : v[1]}</option>`).join('')}</select><span class="sp"></span><button class="btn s" data-a="reload">↻ 새로고침</button></div>
+    <p class="muted" style="margin:10px 0 0">티어(이번 주 XP): ${TIERS.map(t => `<span class="tier" style="background:${t[2]}">${t[1]} ${t[0]}+</span>`).join(' ')} · 매주 월요일 새 시즌 ${S.lang !== 'all' && S.mode === 'week' ? '· 언어별 보기는 누적 XP 기준이에요' : ''}</p></div>`;
+  if (!S.rows) return h + '<div class="muted">불러오는 중…</div>';
+  if (S.rows.err) return h + `<div class="msg">순위를 불러오지 못했어요: ${esc(S.rows.err)} — Firestore 보안 규칙을 새로 게시했는지 확인하세요.</div>`;
+  h += `<div class="card scroll"><table><thead><tr><th class="rk">#</th><th>이름</th><th>레벨</th><th class="hide-m">연습한 언어</th><th class="num">${S.lang === 'all' ? field : '누적'} XP</th><th class="num hide-m">연습</th><th class="num hide-m">평균</th><th class="num hide-m">🔥연속</th></tr></thead><tbody>`;
+  h += S.rows.map((x, i) => `<tr class="${S.user && x.id === S.user.uid ? 'me' : ''}"><td class="rk">${['🥇', '🥈', '🥉'][i] || i + 1}</td><td><b>${esc(x.name)}</b> ${S.mode === 'week' && S.lang === 'all' ? `<span class="tier" style="background:${tierOf(x.v)[2]}">${tierOf(x.v)[1]}</span>` : ''}</td><td>Lv.${x.lvl || lvlOf(x.xp)}</td>
+    <td class="hide-m">${Object.keys(x.lx || {}).filter(k => x.lx[k] > 0).map(k => (LANGS[k] || [''])[0]).join(' ')}</td><td class="num"><b>${x.v}</b></td><td class="num hide-m">${x.attempts || 0}</td><td class="num hide-m">${x.attempts ? Math.round((x.sumScore || 0) / x.attempts) : 0}</td><td class="num hide-m">${x.streak || 0}</td></tr>`).join('') || '<tr><td colspan="8" class="muted">아직 기록이 없어요.</td></tr>';
+  return h + '</tbody></table></div>';
+}
+async function loadLeague() {
+  try {
+    const field = S.lang !== 'all' ? 'lx.' + S.lang : S.mode === 'week' ? 'wk.' + W : 'xp';
+    const qs = await F.getDocs(F.query(F.collection(db, 'speak_users'), F.orderBy(field, 'desc'), F.limit(100)));
+    const rows = []; qs.forEach(d => { const x = d.data(); x.id = d.id; x.v = S.lang !== 'all' ? (x.lx || {})[S.lang] || 0 : S.mode === 'week' ? (x.wk || {})[W] || 0 : x.xp || 0; if (x.v > 0) rows.push(x); });
+    S.rows = rows;
+  } catch (e) { S.rows = { err: e.code || String(e) }; }
+  render();
+}
+function vClass() {
+  if (S.sel) return vMembers();
+  let h = `<div class="card"><div class="row"><b style="font-size:17px">${S.admin ? '모든 반 (관리자)' : '내가 만든 반'}</b><span class="sp"></span><button class="btn s" data-a="reload">↻</button></div>
+    <div class="row" style="margin-top:12px"><input id="cname" placeholder="새 반 이름 (예: KCIS 스페인어 1반)" maxlength="40" style="flex:1;min-width:200px"><select id="clang">${Object.entries(LANGS).map(([k, v]) => `<option value="${k}">${v[0]} ${k === 'all' ? '모든 언어 집계' : v[1] + ' 연습만 집계'}</option>`).join('')}</select><button class="btn a" data-a="create">+ 반 만들기</button></div>
+    ${S.msg ? `<div class="msg ${S.msgOk ? 'ok' : ''}">${esc(S.msg)}</div>` : ''}</div>`;
+  if (!S.classes) return h + '<div class="muted">불러오는 중…</div>';
+  if (S.classes.err) return h + `<div class="msg">${esc(S.classes.err)}</div>`;
+  h += S.classes.length ? `<div class="cls">${S.classes.map(c => `<button class="cl" data-a="open" data-v="${c.id}"><span style="font-size:26px">${(LANGS[c.lang] || ['🌐'])[0]}</span><b>${esc(c.name)}</b><span class="muted">${(LANGS[c.lang] || ['', c.lang])[1]} · 담당 ${esc(c.ownerName || '')}</span><div style="margin-top:8px"><span class="code">${c.id}</span></div></button>`).join('')}</div>`
+    : '<div class="card muted">아직 만든 반이 없어요. 위에서 반을 만들고 학생에게 반 코드나 초대 링크를 알려 주세요.</div>';
+  return h;
+}
+async function loadClasses() {
+  try {
+    const col = F.collection(db, 'speak_classes');
+    const qs = await F.getDocs(S.admin ? F.query(col, F.limit(300)) : F.query(col, F.where('owner', '==', S.user.uid)));
+    S.classes = []; qs.forEach(d => S.classes.push({ id: d.id, ...d.data() }));
+    S.classes.sort((a, b) => String(a.name).localeCompare(String(b.name), 'ko'));
+  } catch (e) { S.classes = { err: e.code || String(e) }; }
+  render();
+}
+function vMembers() {
+  const c = S.cls || {}, own = S.admin || c.owner === S.user.uid;
+  const invite = (site) => `https://yalli2.github.io/${site || ''}/?speakClass=${S.sel}`;
+  let h = `<div class="card"><div class="row"><button class="btn s" data-a="back">← 반 목록</button><span class="sp"></span><button class="btn s" data-a="csv">⬇ CSV 내보내기</button><button class="btn s" data-a="reload">↻</button></div>
+    <div class="row" style="margin-top:12px"><span style="font-size:30px">${(LANGS[c.lang] || ['🌐'])[0]}</span><div style="flex:1"><b style="font-size:19px">${esc(c.name || S.sel)}</b><div class="muted">${(LANGS[c.lang] || ['', c.lang || ''])[1]} · 담당 ${esc(c.ownerName || '')} · 멤버 ${Array.isArray(S.members) ? S.members.length : '…'}명</div></div><span class="code" style="font-size:18px">${S.sel}</span></div>
+    <div class="row" style="margin-top:10px"><button class="btn s" data-a="copy" data-v="${S.sel}">📋 반 코드 복사</button>${c.site ? `<button class="btn s" data-a="copy" data-v="${invite(c.site)}">🔗 초대 링크 복사</button>` : ''}${own ? '<button class="btn s g" data-a="delCls" style="color:#b3123a">반 삭제</button>' : ''}</div>
+    <p class="muted" style="margin:8px 0 0">학생은 어학 사이트 오른쪽의 <b>🎙 말하기</b> → <b>우리 반</b> 탭에서 반 코드를 입력하거나, 초대 링크로 들어오면 자동으로 가입돼요.</p></div>`;
+  if (S.members === null || S.members === 'loading') return h + '<div class="muted">불러오는 중…</div>';
+  if (S.members.err) return h + `<div class="msg">${esc(S.members.err)}</div>`;
+  const key = { wk: m => (m.wk || {})[W] || 0, xp: m => m.xp || 0, att: m => m.attempts || 0, avg: m => m.attempts ? (m.sumScore || 0) / m.attempts : 0, perf: m => m.perfect || 0, st: m => m.streak || 0, name: m => m.name || '' }[S.sort];
+  const rows = S.members.slice().sort((a, b) => S.sort === 'name' ? String(key(a)).localeCompare(String(key(b)), 'ko') : key(b) - key(a));
+  const th = (k, t, cls = 'num') => `<th class="${cls}" data-a="sort" data-v="${k}">${t}${S.sort === k ? ' ▼' : ''}</th>`;
+  h += `<div class="card scroll"><table><thead><tr><th class="rk">#</th>${th('name', '이름', '')}<th>레벨</th>${th('wk', '이번 주 XP')}${th('xp', '누적 XP')}${th('att', '연습 횟수')}${th('avg', '평균 점수')}${th('perf', '95점+')}${th('st', '🔥연속')}<th class="hide-m">마지막 연습</th>${own ? '<th></th>' : ''}</tr></thead><tbody>`;
+  h += rows.map((m, i) => `<tr class="${m.id === S.user.uid ? 'me' : ''}"><td class="rk">${['🥇', '🥈', '🥉'][i] || i + 1}</td><td><b>${esc(m.name)}</b></td><td>Lv.${m.lvl || 1}</td><td class="num"><b>${(m.wk || {})[W] || 0}</b></td><td class="num">${m.xp || 0}</td><td class="num">${m.attempts || 0}</td><td class="num">${m.attempts ? Math.round((m.sumScore || 0) / m.attempts) : 0}</td><td class="num">${m.perfect || 0}</td><td class="num">${m.streak || 0}</td><td class="hide-m muted">${esc(m.lastDay || '')}</td>${own && m.id !== S.user.uid ? `<td><button class="btn s g" data-a="kick" data-v="${esc(m.id)}">내보내기</button></td>` : own ? '<td></td>' : ''}</tr>`).join('') || `<tr><td colspan="11" class="muted">아직 멤버가 없어요.</td></tr>`;
+  return h + '</tbody></table></div>';
+}
+async function loadMembers() {
+  S.members = 'loading';
+  try {
+    const cs = await F.getDoc(F.doc(db, 'speak_classes', S.sel));
+    if (!cs.exists()) { S.members = { err: '없는 반 코드예요: ' + S.sel }; return render(); }
+    S.cls = cs.data();
+    const qs = await F.getDocs(F.collection(db, 'speak_classes', S.sel, 'members'));
+    S.members = []; qs.forEach(d => S.members.push({ id: d.id, ...d.data() }));
+  } catch (e) { S.members = { err: e.code || String(e) }; }
+  render();
+}
+let confirmK = null, confirmT = 0;
+function sure(k, msg) { const n = Date.now(); if (confirmK === k && n - confirmT < 4000) { confirmK = null; return true; } confirmK = k; confirmT = n; S.msg = msg + ' — 한 번 더 누르면 실행돼요.'; S.msgOk = false; render(); return false; }
+document.addEventListener('change', e => { if (e.target.id === 'lang') { S.lang = e.target.value; S.rows = null; render(); } });
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const a = b.dataset.a, v = b.dataset.v;
+  if (a === 'tab') { S.tab = v; S.msg = ''; if (v === 'class') { S.sel = null; S.members = null; history.replaceState(null, '', location.pathname); } render(); }
+  else if (a === 'logout') Au.signOut(auth);
+  else if (a === 'google') { const p = new Au.GoogleAuthProvider(); Au.signInWithPopup(auth, p).catch(err => { if (/popup-blocked|operation-not-supported/.test(err.code || '')) Au.signInWithRedirect(auth, p); else { S.msg = err.code; render(); } }); }
+  else if (a === 'authTab') { S.authTab = v; S.msg = ''; render(); }
+  else if (a === 'email') {
+    const em = $('#em').value.trim(), pw = $('#pw').value;
+    try { if (S.authTab === 'up') { const c = await Au.createUserWithEmailAndPassword(auth, em, pw); await Au.sendEmailVerification(c.user); } else await Au.signInWithEmailAndPassword(auth, em, pw); }
+    catch (err) { S.msg = /invalid|wrong|not-found/.test(err.code) ? '이메일 또는 비밀번호가 올바르지 않아요.' : err.code; render(); }
+  }
+  else if (a === 'verified') { await S.unverified.reload(); await S.unverified.getIdToken(true); location.reload(); }
+  else if (a === 'mode') { S.mode = v; S.rows = null; render(); }
+  else if (a === 'reload') { S.rows = null; S.classes = null; S.members = null; render(); }
+  else if (a === 'open') { S.sel = v; S.members = null; S.msg = ''; history.replaceState(null, '', '#class=' + v); render(); }
+  else if (a === 'back') { S.sel = null; S.members = null; S.msg = ''; history.replaceState(null, '', location.pathname); render(); }
+  else if (a === 'sort') { S.sort = v; render(); }
+  else if (a === 'copy') { navigator.clipboard.writeText(v).then(() => { S.msg = '복사했어요: ' + v; S.msgOk = true; render(); }); }
+  else if (a === 'create') {
+    const name = $('#cname').value.trim(), lang = $('#clang').value; if (!name) { S.msg = '반 이름을 입력하세요'; render(); return; }
+    let code = rid(6); try { if ((await F.getDoc(F.doc(db, 'speak_classes', code))).exists()) code = rid(6);
+      await F.setDoc(F.doc(db, 'speak_classes', code), { name, owner: S.user.uid, ownerName: S.user.displayName || S.user.email.split('@')[0], lang, site: '', createdAt: F.serverTimestamp() });
+      S.msg = `반을 만들었어요! 반 코드: ${code}`; S.msgOk = true; S.classes = null; render();
+    } catch (err) { S.msg = '만들지 못했어요: ' + (err.code || err); S.msgOk = false; render(); }
+  }
+  else if (a === 'kick') { if (!sure('k' + v, '이 학생을 반에서 내보낼까요?')) return; await F.deleteDoc(F.doc(db, 'speak_classes', S.sel, 'members', v)).catch(err => alertMsg(err)); S.msg = ''; S.members = null; render(); }
+  else if (a === 'delCls') {
+    if (!sure('d' + S.sel, '반과 멤버 기록을 모두 삭제할까요?')) return;
+    try { const qs = await F.getDocs(F.collection(db, 'speak_classes', S.sel, 'members')); await Promise.all(qs.docs.map(d => F.deleteDoc(d.ref))); await F.deleteDoc(F.doc(db, 'speak_classes', S.sel)); S.sel = null; S.classes = null; S.members = null; S.msg = '반을 삭제했어요'; S.msgOk = true; history.replaceState(null, '', location.pathname); render(); }
+    catch (err) { alertMsg(err); }
+  }
+  else if (a === 'csv') {
+    const head = ['순위', '이름', '레벨', '이번주XP', '누적XP', '연습횟수', '평균점수', '95점이상', '연속일', '마지막연습'];
+    const rows = S.members.slice().sort((x, y) => ((y.wk || {})[W] || 0) - ((x.wk || {})[W] || 0)).map((m, i) => [i + 1, m.name, m.lvl || 1, (m.wk || {})[W] || 0, m.xp || 0, m.attempts || 0, m.attempts ? Math.round((m.sumScore || 0) / m.attempts) : 0, m.perfect || 0, m.streak || 0, m.lastDay || '']);
+    const csv = '﻿' + [head].concat(rows).map(r => r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(',')).join('\n');
+    const l = document.createElement('a'); l.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); l.download = `speak_${S.sel}_${W}.csv`; l.click();
+  }
+});
+function alertMsg(err) { S.msg = err.code || String(err); S.msgOk = false; render(); }
+function vHelp() {
+  return `<div class="card"><h2 style="margin-top:0">🎙 말하기 연습은 이렇게 작동해요</h2><div class="steps">
+    <div><b>1. 어디서나 🎙</b>모든 어학 사이트 오른쪽에 <b>🎙 말하기</b> 버튼이 생겨요. 사이트의 언어(스페인어·영어·중국어·일본어·프랑스어·러시아어·이탈리아어·아랍어·카탈루냐어·포르투갈어·라틴어)를 자동으로 알아봐요.</div>
+    <div><b>2. 문장 고르기</b>🎯 화면에서 문장을 누르거나, 마우스로 드래그하거나, 📄 이 페이지 문장 목록에서 골라요. 사이트에서 🔊로 들은 문장도 바로 연습할 수 있어요.</div>
+    <div><b>3. 듣고 → 말하기</b>🔊 원어민 음성을 듣고 🎙을 눌러 따라 말하면 자동으로 녹음·평가해요. 정확도·완성도·유창성 점수와 틀린 단어가 표시돼요.</div>
+    <div><b>4. 녹음은 내 기기에만</b>녹음 파일은 서버로 보내지 않고 이 기기에만 저장돼요(최근 300개). 원어민 → 나 비교 듣기, 다운로드가 가능해요.</div>
+    <div><b>5. XP · 레벨 · 배지</b>점수에 따라 XP를 얻어요 (95+ 12XP, 85+ 9XP, 70+ 6XP, 50+ 3XP). 오늘 첫 연습 +5, 새 문장 85점 정복 +3. 같은 문장은 하루 3번까지만 XP가 쌓여요.</div>
+    <div><b>6. 반 · 리그</b>로그인하면 반에 들어가 반 안에서 순위를 겨루고, 모든 사이트를 합친 전체 리그(매주 월요일 새 시즌, 브론즈~다이아 티어)에 올라가요.</div>
+  </div><p class="muted" style="margin-bottom:0">음성 인식은 Chrome·Edge(PC·안드로이드)에서 가장 잘 돼요. 라틴어처럼 음성 인식이 없는 언어나 브라우저에서는 녹음한 뒤 스스로 별점으로 평가해요.</p></div>
+  <div class="card"><h3 style="margin-top:0">👩‍🏫 선생님 사용법</h3><ol style="margin:0;padding-left:20px"><li>[반 관리]에서 반을 만들거나, 어학 사이트의 🎙 → 우리 반 탭에서 만들어요.</li><li>반 코드(6자리)나 초대 링크를 학생에게 공유해요.</li><li>[반 관리]에서 학생별 이번 주 XP·연습 횟수·평균 점수·연속 학습일을 보고 CSV로 내보내요.</li><li>반을 만들 때 고른 언어의 연습만 반 점수에 반영돼요(‘모든 언어’를 고르면 전부 합산).</li></ol></div>`;
+}
+render();
+</script>
+</body>
+</html>

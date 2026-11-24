@@ -194,7 +194,20 @@
     });
   }
 
-  loadScript(BASE + 'config.js?v=' + Math.floor(Date.now() / 300000)).then(start, function () { clearTimeout(loadingTimer); unlock(); });
+  /* 🎙 말하기 연습 모듈(speak.js) — 어학 사이트에만 나타나요. 끄기: 이 스크립트에 data-speak="off" 또는 config options.speak:false */
+  function loadSpeak() {
+    try {
+      var o = (window.SMC_CONFIG && window.SMC_CONFIG.options) || {};
+      if (o.speak === false || (me && me.getAttribute('data-speak') === 'off') || window.__DAIN_SPEAK__) return;
+      var sp = document.createElement('script');
+      sp.src = BASE + 'speak.js?v=' + Math.floor(Date.now() / 600000); sp.async = true;
+      sp.setAttribute('data-site', rawSite);
+      if (me && me.getAttribute('data-speak-lang')) sp.setAttribute('data-lang', me.getAttribute('data-speak-lang'));
+      (document.head || ROOT).appendChild(sp);
+    } catch (e) {}
+  }
+
+  loadScript(BASE + 'config.js?v=' + Math.floor(Date.now() / 300000)).then(function () { loadSpeak(); start(); }, function () { clearTimeout(loadingTimer); unlock(); });
 
   function start() {
     var cfg = window.SMC_CONFIG;
