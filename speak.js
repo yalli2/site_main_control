@@ -519,7 +519,7 @@
     var recDone = new Promise(function (res) {
       if (a.mr && a.mr.state !== 'inactive') { a.mr.onstop = function () { res(); }; try { a.mr.stop(); } catch (e) { res(); } } else res();
     });
-    ST.live = tx('평가하는 중…', 'Scoring…'); paintLive(); popState('scoring');
+    ST.live = tx('음성 분석중입니다.', 'Analyzing your voice…'); paintLive(); popState('scoring');
     setTimeout(function () {
       recDone.then(function () {
         stopTracks();
