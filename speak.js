@@ -1536,7 +1536,7 @@
         '<div class="ip-m"><i></i></div><div class="ip-live" lang="' + LG.tts[0] + '"></div>' +
         '<div class="row mt"><button class="btn s a" data-act="ipStop">⏹ ' + esc(tx('멈추기', 'Stop')) + '</button><button class="btn s" data-act="ipSay">🔊 ' + esc(tx('원어민', 'Native')) + '</button><span class="muted">' + esc(tx('다 말하면 자동으로 멈춰요', 'Stops automatically')) + '</span></div></div>';
     } else if (st === 'scoring') {
-      var b0 = p.querySelector('.ip-b'); if (b0) b0.innerHTML = '<div class="ip-st"><span class="ip-spin"></span><b>' + esc(tx('평가하는 중…', 'Scoring…')) + '</b></div>';
+      var b0 = p.querySelector('.ip-b'); if (b0) b0.innerHTML = '<div class="ip-st"><span class="ip-spin"></span><b>' + esc(tx('음성 분석중입니다.', 'Analyzing your voice…')) + '</b></div>';
     } else if (st === 'ai') {
       chipState(POP.chip, 'busy');
       var b1 = p.querySelector('.ip-b'); if (b1) b1.innerHTML = '<div class="ip-st"><span class="ip-spin"></span><b>🧠 ' + esc(tx('AI가 녹음을 분석하는 중…', 'AI is analyzing…')) + '</b></div><div class="ip-m pg"><i style="width:6%"></i></div><div class="muted ip-pt">' + esc(tx('잠시만 기다려 주세요.', 'One moment…')) + '</div>';
