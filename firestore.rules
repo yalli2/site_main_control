@@ -13,6 +13,15 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+    // 업체(기관 계약): 관리자 + 그 업체 소속 회원만 읽기(가드가 확인), 관리자 쓰기
+    match /orgs/{o} {
+      allow get: if isAdmin() || (verified() && o in get(/databases/$(database)/documents/users/$(myEmail())).data.get('orgs', []));
+      allow list, write: if isAdmin();
+    }
+    // 직접 만든 패키지: 관리자 전용
+    match /packages/{p} {
+      allow read, write: if isAdmin();
+    }
     // 그룹: 인증된 회원 읽기, 관리자 쓰기
     match /groups/{g} {
       allow read: if verified();

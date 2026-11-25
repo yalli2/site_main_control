@@ -66,6 +66,7 @@
       notmember: '아직 등록되지 않은 계정입니다. 선생님(관리자)에게 접근을 요청하세요.',
       suspended: '이 계정은 현재 이용이 정지되어 있어요. 관리자에게 문의하세요.',
       expired: '이용 기간이 끝났어요. 연장이 필요하면 관리자에게 요청하세요.',
+      contract: '소속 기관(반)의 이용 기간이 아니거나 이용이 잠시 멈춰 있어요. 담당자에게 문의하세요.',
       nosite: '이 계정에는 이 사이트 권한이 없어요. 아래 버튼으로 접근을 요청할 수 있어요.',
       request: '접근 요청 보내기', requestMsg: '요청 메시지 (선택) — 예: KCIS 스페인어 1반 김민수',
       requested: '요청을 보냈어요! 관리자가 승인하면 새로고침해서 이용하세요.',
@@ -100,6 +101,7 @@
       notmember: 'This account is not registered yet. Ask the administrator for access.',
       suspended: 'This account is suspended. Please contact the administrator.',
       expired: 'Your access period has ended. Ask the administrator to extend it.',
+      contract: 'Your organization\'s access period is not active right now. Please contact your coordinator.',
       nosite: 'Your account does not have access to this site. You can request access below.',
       request: 'Request access', requestMsg: 'Message (optional) — e.g. class and name',
       requested: 'Request sent! Refresh after the administrator approves it.',
@@ -284,22 +286,29 @@
     }
 
     /* ----- 권한 판단 ----- */
+    function lc(a) { return (a || []).map(function (s) { return String(s).toLowerCase(); }); }
+    function hasSite(o) { return !!o && (!!o.allSites || lc(o.sites).indexOf(SITE) >= 0 || lc(o.pkgSites).indexOf(SITE) >= 0); }
+    function inPeriod(o) { var d = today(); return !(o.startsAt && o.startsAt > d) && !(o.expiresAt && o.expiresAt < d); }
+    function getDocData(col, id) {
+      return F.getDoc(F.doc(db, col, id)).then(function (s) { return s.exists() ? s.data() : null; }, function () { return null; });
+    }
+    /* 권한 = 회원 개별(사이트·패키지) ∪ 그룹(반) ∪ 업체(기관 계약) */
     function checkAccess(ud, mode) {
       if (!ud) return Promise.resolve({ ok: false, reason: 'notmember' });
       if (ud.status === 'suspended') return Promise.resolve({ ok: false, reason: 'suspended' });
       if (ud.expiresAt && ud.expiresAt < today()) return Promise.resolve({ ok: false, reason: 'expired' });
-      if (mode === 'members' || ud.allSites) return Promise.resolve({ ok: true });
-      if ((ud.sites || []).map(function (s) { return String(s).toLowerCase(); }).indexOf(SITE) >= 0) return Promise.resolve({ ok: true });
-      var gs = ud.groups || [];
-      if (!gs.length) return Promise.resolve({ ok: false, reason: 'nosite' });
-      return Promise.all(gs.map(function (g) {
-        return F.getDoc(F.doc(db, 'groups', g)).then(function (s) { return s.exists() ? s.data() : null; }, function () { return null; });
-      })).then(function (list) {
-        var ok = list.some(function (G) {
-          return G && !(G.expiresAt && G.expiresAt < today()) && (G.allSites || (G.sites || []).map(function (s) { return String(s).toLowerCase(); }).indexOf(SITE) >= 0);
+      if (mode === 'members' || hasSite(ud)) return Promise.resolve({ ok: true });
+      var gs = ud.groups || [], os = ud.orgs || [];
+      if (!gs.length && !os.length) return Promise.resolve({ ok: false, reason: 'nosite' });
+      return Promise.all(gs.map(function (g) { return getDocData('groups', g); }).concat(os.map(function (o) { return getDocData('orgs', o); })))
+        .then(function (list) {
+          var groups = list.slice(0, gs.length), orgs = list.slice(gs.length);
+          var okG = groups.some(function (G) { return G && inPeriod(G) && hasSite(G); });
+          var okO = orgs.some(function (O) { return O && O.status !== 'paused' && O.status !== 'ended' && inPeriod(O) && hasSite(O); });
+          if (okG || okO) return { ok: true };
+          var blockedOrg = orgs.some(function (O) { return O && hasSite(O); }) || groups.some(function (G) { return G && hasSite(G); });
+          return { ok: false, reason: blockedOrg ? 'contract' : 'nosite' };
         });
-        return ok ? { ok: true } : { ok: false, reason: 'nosite' };
-      });
     }
 
     function evaluate() {
