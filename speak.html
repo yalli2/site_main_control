@@ -79,7 +79,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 const pad = n => (n < 10 ? '0' : '') + n;
 function weekKey(d = new Date()) { const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return 'w' + t.getUTCFullYear() + '_' + pad(Math.ceil(((t - y0) / 86400000 + 1) / 7)); }
 function rid(n) { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; return Array.from(crypto.getRandomValues(new Uint8Array(n)), b => a[b % a.length]).join(''); }
-const S = { tab: 'league', user: null, admin: false, mode: 'week', lang: 'all', rows: null, classes: null, sel: null, members: null, sort: 'wk', msg: '', authTab: 'in' };
+const S = { tab: 'class', user: null, admin: false, mode: 'week', lang: 'all', rows: null, classes: null, sel: null, members: null, sort: 'wk', msg: '', authTab: 'in' };
 const W = weekKey();
 const $ = s => document.querySelector(s);
 
@@ -88,15 +88,16 @@ Au.onAuthStateChanged(auth, u => {
   S.unverified = u && !S.user ? u : null;
   S.admin = !!(S.user && admins.includes((S.user.email || '').toLowerCase()));
   S.rows = null; S.classes = null; S.members = null;
-  const h = new URLSearchParams(location.hash.slice(1)); if (h.get('class')) { S.tab = 'class'; S.sel = h.get('class').toUpperCase(); }
+  const h = new URLSearchParams(location.hash.slice(1)); if (h.get('class')) { location.replace('room.html?room=' + encodeURIComponent(h.get('class').toUpperCase())); }
   render();
 });
 
 function render() {
   $('#who').innerHTML = S.user ? `${esc(S.user.email)}${S.admin ? ' · ⚙ 관리자' : ''} <button class="btn s w" data-a="logout">로그아웃</button>` : '';
-  $('#nav').innerHTML = [['league', '🏆 전체 리그'], ['class', '👥 반 관리'], ['help', '📘 사용 안내']].map(t => `<button class="${S.tab === t[0] ? 'on' : ''}" data-a="tab" data-v="${t[0]}">${t[1]}</button>`).join('');
+  $('#nav').innerHTML = [['class', '👥 우리 반 (실시간)'], ['league', '🏆 전체 리그'], ['help', '📘 사용 안내']].map(t => `<button class="${S.tab === t[0] ? 'on' : ''}" data-a="tab" data-v="${t[0]}">${t[1]}</button>`).join('');
   const app = $('#app');
   if (S.tab === 'help') { app.innerHTML = vHelp(); return; }
+  if (S.tab === 'class') { app.innerHTML = vRoom(); return; }
   if (!S.user) { app.innerHTML = vLogin(); return; }
   app.innerHTML = S.tab === 'league' ? vLeague() : vClass();
   if (S.tab === 'league' && !S.rows) loadLeague();
@@ -110,6 +111,16 @@ function vLogin() {
     <div class="seg" style="margin-top:14px"><button class="${S.authTab === 'in' ? 'on' : ''}" data-a="authTab" data-v="in">이메일 로그인</button><button class="${S.authTab === 'up' ? 'on' : ''}" data-a="authTab" data-v="up">가입</button></div>
     <input type="email" id="em" placeholder="이메일"><input type="password" id="pw" placeholder="비밀번호 (6자 이상)">
     <button class="btn a" style="width:100%;justify-content:center;margin-top:10px" data-a="email">${S.authTab === 'up' ? '가입하기' : '로그인'}</button>${S.msg ? `<div class="msg">${esc(S.msg)}</div>` : ''}</div>`;
+}
+function vRoom() {
+  return `<div class="card"><h2 style="margin-top:0">👥 우리 반 — 로그인 없이 방 코드로 겨뤄요</h2>
+    <p class="muted" style="margin-top:0">travel_spanish처럼 <b>이름 + 방 코드</b>만으로 반이 만들어지고, 같은 방 학생들의 말하기 점수가 실시간 순위표에 올라가요. 같은 방 코드는 모든 어학 사이트에서 함께 쓰여요.</p>
+    <div class="row"><input id="rc" maxlength="12" placeholder="방 코드 (예: KCIS1A)" style="text-transform:uppercase;font-family:ui-monospace,monospace;font-weight:800;letter-spacing:.08em;flex:1;min-width:180px"><button class="btn" data-a="rnew">✨ 새 방 코드</button><button class="btn a" data-a="ropen">📺 대시보드 열기</button></div>
+    ${S.msg ? `<div class="msg ${S.msgOk ? 'ok' : ''}">${esc(S.msg)}</div>` : ''}</div>
+  <div class="steps"><div><b>1. 방 코드 정하기</b>위에서 새 방 코드를 만들거나 원하는 코드(영문·숫자 3~12자)를 정해요.</div>
+    <div><b>2. 학생 입장</b>학생은 어학 사이트 오른쪽 <b>🎙 말하기 → 👥 우리 반</b>에서 이름과 방 코드를 입력해요. 사이트 주소 뒤에 <code>?room=방코드</code>를 붙인 링크·QR로 들어오면 코드가 자동으로 채워져요.</div>
+    <div><b>3. 실시간 경쟁</b>말하기 점수가 바로 반 순위·실시간 피드·문장별 1등·인기 문장에 반영돼요. 📺 대시보드를 프로젝터에 띄워 두세요.</div>
+    <div><b>4. 수업 전 초기화</b>패널의 👩‍🏫 선생님 도구에서 방 코드를 입력하면 그 방 기록을 지울 수 있어요.</div></div>`;
 }
 function vLeague() {
   const field = S.mode === 'week' ? '이번 주' : '누적';
@@ -186,6 +197,8 @@ document.addEventListener('click', async e => {
   const b = e.target.closest('[data-a]'); if (!b) return;
   const a = b.dataset.a, v = b.dataset.v;
   if (a === 'tab') { S.tab = v; S.msg = ''; if (v === 'class') { S.sel = null; S.members = null; history.replaceState(null, '', location.pathname); } render(); }
+  else if (a === 'rnew') { const c = rid(6); $('#rc').value = c; }
+  else if (a === 'ropen') { const c = ($('#rc').value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12); if (c.length < 3) { S.msg = '방 코드를 입력하세요 (영문·숫자 3~12자)'; S.msgOk = false; render(); return; } window.open('room.html?room=' + c, '_blank'); }
   else if (a === 'logout') Au.signOut(auth);
   else if (a === 'google') { const p = new Au.GoogleAuthProvider(); Au.signInWithPopup(auth, p).catch(err => { if (/popup-blocked|operation-not-supported/.test(err.code || '')) Au.signInWithRedirect(auth, p); else { S.msg = err.code; render(); } }); }
   else if (a === 'authTab') { S.authTab = v; S.msg = ''; render(); }
@@ -229,7 +242,7 @@ function vHelp() {
     <div><b>3. 듣고 → 말하기</b>🔊 원어민 음성을 듣고 🎙을 눌러 따라 말하면 자동으로 녹음·평가해요. 정확도·완성도·유창성 점수와 틀린 단어가 표시돼요.</div>
     <div><b>4. 녹음은 내 기기에만</b>녹음 파일은 서버로 보내지 않고 이 기기에만 저장돼요(최근 300개). 원어민 → 나 비교 듣기, 다운로드가 가능해요.</div>
     <div><b>5. XP · 레벨 · 배지</b>점수에 따라 XP를 얻어요 (95+ 12XP, 85+ 9XP, 70+ 6XP, 50+ 3XP). 오늘 첫 연습 +5, 새 문장 85점 정복 +3. 같은 문장은 하루 3번까지만 XP가 쌓여요.</div>
-    <div><b>6. 반 · 리그</b>로그인하면 반에 들어가 반 안에서 순위를 겨루고, 모든 사이트를 합친 전체 리그(매주 월요일 새 시즌, 브론즈~다이아 티어)에 올라가요.</div>
+    <div><b>6. 우리 반 · 리그</b><b>👥 우리 반</b>은 로그인 없이 이름과 방 코드로 들어가 실시간 순위·문장별 1등을 겨뤄요. <b>🏆 전체 리그</b>는 로그인하면 모든 사이트를 합친 순위(매주 월요일 새 시즌)에 올라가요.</div>
   </div><p class="muted" style="margin-bottom:0">음성 인식은 Chrome·Edge(PC·안드로이드)에서 가장 잘 돼요. 라틴어처럼 음성 인식이 없는 언어나 브라우저에서는 녹음한 뒤 스스로 별점으로 평가해요.</p></div>
   <div class="card"><h3 style="margin-top:0">👩‍🏫 선생님 사용법</h3><ol style="margin:0;padding-left:20px"><li>[반 관리]에서 반을 만들거나, 어학 사이트의 🎙 → 우리 반 탭에서 만들어요.</li><li>반 코드(6자리)나 초대 링크를 학생에게 공유해요.</li><li>[반 관리]에서 학생별 이번 주 XP·연습 횟수·평균 점수·연속 학습일을 보고 CSV로 내보내요.</li><li>반을 만들 때 고른 언어의 연습만 반 점수에 반영돼요(‘모든 언어’를 고르면 전부 합산).</li></ol></div>`;
 }

@@ -64,17 +64,18 @@
 | 🎙 문장마다 버튼 | **스페인어 사이트**: 화면의 문장 끝과 🔊 버튼 옆마다 작은 🎙 버튼 → 누르면 바로 녹음·평가하고 그 자리에 결과 카드(점수·틀린 단어·내 녹음·원어민 비교·저장). 버튼에 최고 점수 표시 |
 | 🧠 AI 채점 | 브라우저 음성 인식이 아무것도 못 들으면(녹음과 마이크 충돌, 카카오톡 인앱, Firefox 등) **녹음 파일을 AI(Whisper)가 받아 적어 채점**. 처음 한 번 모델 다운로드(PC 약 75MB·휴대폰 약 40MB), 이후 캐시 |
 | ⭐ XP·레벨·배지 | 점수별 XP, 연속 학습, 배지 14종 |
-| 👥 반 | 누구나 반을 만들고 6자리 코드·초대 링크(`?speakClass=코드`)로 가입, 반 안 순위 |
+| 👥 우리 반 | **로그인 없이** 이름 + 방 코드로 입장(travel_spanish 방식, 실시간 MQTT). 반 순위(전체·사이트별)·실시간 피드·문장별 1등·인기 문장, `?room=코드` 링크·QR, 📺 크게 보기, 선생님 방 초기화. 같은 방 코드는 모든 어학 사이트에서 공유 |
 | 🏆 리그 | 모든 어학 사이트 합산 전체 리그(주간·누적·언어별), 브론즈~다이아 티어 |
 
 - 언어 자동 인식: 스페인어·영어·중국어·일본어·프랑스어·러시아어·이탈리아어·아랍어·카탈루냐어·포르투갈어·라틴어(라틴어는 녹음 후 자기 평가)
-- 선생님용 화면: [`speak.html`](https://yalli2.github.io/site_main_control/speak.html) — 반 관리, 학생별 표, CSV 내보내기, 전체 리그
+- 프로젝터용 반 대시보드: [`room.html?room=코드`](https://yalli2.github.io/site_main_control/room.html)
+- 선생님 안내·전체 리그: [`speak.html`](https://yalli2.github.io/site_main_control/speak.html)
 - 끄기: 사이트의 가드 줄에 `data-speak="off"`, 전체 끄기는 `config.js`의 `options.speak: false`
 - 문장마다 🎙 버튼: 기본은 스페인어 사이트만. 사이트별로 가드 줄에 `data-speak-inline="off"`(끄기) 또는 `"on"`(켜기), 전체 언어 지정은 `config.js`의 `options.speakInline: ['es','fr', …]` (끄기 `false`)
 - 문장 버튼은 제목·메뉴·단어 나열·빈칸 문제·✗ 틀린 예문·퀴즈 보기에는 붙지 않아요. 탭을 바꾸거나 내용이 새로 나타나면 자동으로 다시 붙어요
 - AI 채점이 안 되면 학교 방화벽이 `cdn.jsdelivr.net`, `huggingface.co`를 막고 있는지 확인하세요 (그때는 녹음 듣고 스스로 별점 평가)
 - 언어 지정: 가드 줄에 `data-speak-lang="es"` 처럼 지정 (자동 인식이 틀릴 때)
-- Firestore 컬렉션: `speak_users`, `speak_classes/{코드}/members` — **보안 규칙을 다시 게시해야 작동**해요 (`firestore.rules` 또는 콘솔 [설치·설정] ③)
+- 🏆 전체 리그(로그인)는 Firestore `speak_users`를 써요 — 보안 규칙을 다시 게시해야 작동해요. 👥 우리 반은 규칙 없이 바로 작동해요.
 
 ## 파일 구성
 
